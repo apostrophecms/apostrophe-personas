@@ -1,0 +1,33 @@
+{
+  "name": "apostrophe-personas",
+  "version": "2.0.0",
+  "description": "Specialize the content of each page of an Apostrophe site based on the user's primary affiliation (employee versus employer, truck vs. car, etc)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apostrophecms/apostrophe-personas.git"
+  },
+  "keywords": [
+    "apostrophe",
+    "cms"
+  ],
+  "author": "P'unk Avenue LLC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/apostrophecms/apostrophe-personas/issues"
+  },
+  "homepage": "https://github.com/apostrophecms/apostrophe-personas#readme",
+  "devDependencies": {
+    "eslint": "^4.15.0",
+    "eslint-config-punkave": "^1.0.10",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^3.5.3"
+  }
+}
