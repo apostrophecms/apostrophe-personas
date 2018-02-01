@@ -154,7 +154,7 @@ module.exports = {
       var personas = self.apos.modules['apostrophe-personas'];
       var liveLocale = workflow && workflow.liveify(req.locale);
       var workflowPrefix = (liveLocale && workflow.prefixes[liveLocale]) || '';
-      if (req.url.substr(0, workflowPrefix.length) !== workflowPrefix) {
+      if (require('url').parse(url).pathname.substr(0, workflowPrefix.length) !== workflowPrefix) {
         // Workflow prefix is not actually present, probably a route like /login
         workflowPrefix = '';
       }
