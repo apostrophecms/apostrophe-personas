@@ -90,6 +90,8 @@ The resulting URLs look like:
 `/en/employer/about`
 `/fr/employeur/about`
 
+*Of course the admin can edit the `/about` part of the French slug to suit the language. That's an apostrophe-workflow feature.*
+
 Both of these URLs reference the same persona, but in different locales.
 
 Since a single doc object serves all personas, the persona prefix does not become part of the slug in the database. The URL is rewritten dynamically as needed.
