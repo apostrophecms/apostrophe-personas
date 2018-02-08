@@ -71,7 +71,7 @@ module.exports = {
         var workflowPrefix = '';
         if (workflow) {
           prefix = persona.prefixes[liveLocale];
-          workflowPrefix = workflow.prefixes[liveLocale];
+          workflowPrefix = (workflow.prefixes && workflow.prefixes[liveLocale]) || '';
         } else {
           prefix = persona.prefix;
         }
@@ -153,7 +153,7 @@ module.exports = {
       var workflow = self.apos.modules['apostrophe-workflow'];
       var personas = self.apos.modules['apostrophe-personas'];
       var liveLocale = workflow && workflow.liveify(req.locale);
-      var workflowPrefix = (liveLocale && workflow.prefixes[liveLocale]) || '';
+      var workflowPrefix = (liveLocale && workflow.prefixes && workflow.prefixes[liveLocale]) || '';
       if (require('url').parse(url).pathname.substr(0, workflowPrefix.length) !== workflowPrefix) {
         // Workflow prefix is not actually present, probably a route like /login
         workflowPrefix = '';
