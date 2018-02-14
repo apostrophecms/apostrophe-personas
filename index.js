@@ -53,7 +53,7 @@ module.exports = {
       // rid of the query
       if (req.query.persona) {
         req.session.nextPersona = req.query.persona;
-        req.url = req.url.replace(/(\?)?(\&)?(persona=[^\&]+)/, '$1');
+        req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
         req.url = req.url.replace(/\?$/, '');
         return res.redirect(req.url);
       }
