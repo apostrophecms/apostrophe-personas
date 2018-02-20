@@ -65,6 +65,8 @@ module.exports = {
       // Find the persona suggested by the URL prefix and adjust req.url
       // after capturing that information.
 
+      var addSlash = false;
+
       var urlPersona = _.find(self.personas, function(persona) {
         var prefix;
         var liveLocale = workflow && workflow.liveify(req.locale);
@@ -75,13 +77,18 @@ module.exports = {
         } else {
           prefix = persona.prefix;
         }
-        if ((req.url.substr(0, workflowPrefix.length) + '/') !== workflowPrefix + '/') {
+        if (req.url.substr(0, workflowPrefix.length + 1) !== (workflowPrefix + '/')) {
           // Unprefixed route like /login
           workflowPrefix = '';
         }
-        if (prefix && (
-          (req.url.substr(workflowPrefix.length, prefix.length) + '/') === (prefix + '/')
-        )) {
+        if (prefix && (req.url.substr(workflowPrefix.length) === prefix)) {
+          // handle /en/car as a full URL gracefully
+          req.url += '/';
+          addSlash = true;
+          return true;
+        }
+        if (prefix && 
+          (req.url.substr(workflowPrefix.length, prefix.length + 1) === (prefix + '/'))) {
           // The workflow prefix is really in the slug, but the
           // persona prefix is not. So snip it out to let
           // apostrophe find it in the database:
@@ -96,6 +103,9 @@ module.exports = {
         }
       });
       urlPersona = urlPersona && urlPersona.name;
+      if (addSlash) {
+        return res.redirect(req.url);
+      }
 
       // Arriving at a generic page with a persona prefix will set the persona cookie of
       // the user only if the referring URL is ours.
