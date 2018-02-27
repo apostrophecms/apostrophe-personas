@@ -95,3 +95,17 @@ The resulting URLs look like:
 Both of these URLs reference the same persona, but in different locales.
 
 Since a single doc object serves all personas, the persona prefix does not become part of the slug in the database. The URL is rewritten dynamically as needed.
+
+## Constructing links to a specific persona
+
+Normally, links generated to pages on the site will have the same persona prefix that is already present in the address bar for the current page.
+
+However it is possible to create link widgets that link to a user-specified persona.
+
+To do that, just create your own link widget as you normally do, and include a field called `linkToPersona`, for which the choices must exactly match the persona names in your `apostrophe-personas` configuration. You may also specify the value `''` (empty string) with the label `Universal`.
+
+Make sure the widget also has a `joinByOne` or `joinByArray` field whose `withType` property is set to `apostrophe-page`. Note that it must be at the same level of the schema.
+
+When you do so, `apostrophe-personas` will automatically detect this situation and correct the generated links to match the specified persona.
+
+> Note that if you are completely overriding the `load` method of your widget without calling the original version of the method, this mechanism will not work automatically. However it is also possible to call the `addPrefix(req, personaName, url)` method of the `apostrophe-personas` module to retrieve a version of any URL that has been corrected for the specified persona.
