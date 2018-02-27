@@ -170,9 +170,9 @@ module.exports = {
       }
       var personaInfo = _.find(personas.personas, { name: persona });
       var prefix = workflow ? personaInfo.prefixes[liveLocale] : personaInfo.prefix;
-
-      if (url.match(/^https?:/)) {
-        var parsed = require('url').parse(url);
+      if (url.match(/^(https?:)?\/\//)) {
+        // Turn on the "slashes denote host" option
+        var parsed = require('url').parse(url, false, true);
         parsed.pathname = prepend(parsed.pathname);
         return require('url').format(parsed);
       } else {
