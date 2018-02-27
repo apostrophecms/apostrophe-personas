@@ -157,6 +157,9 @@ module.exports = {
     // In the presence of workflow, the persona "prefix" falls between
     // the workflow prefix (already in the URL) and the rest of the URL,
     // and varies based on locale.
+    //
+    // If the URL already has a persona prefix it is replaced with
+    // one appropriate to the given persona name.
 
     self.addPrefix = function(req, persona, url) {
 
@@ -180,15 +183,37 @@ module.exports = {
         return result;
       }
       function prepend(path) {
-        var result = path.substr(0, workflowPrefix.length) + prefix;
-        var remainder = path.substr(workflowPrefix.length);
-        if (remainder.length) {
-          return result + remainder;
+        path = path.substr(workflowPrefix.length);
+
+        var existingPersonaPrefix = _.find(self.getAllPrefixes(req), function(prefix) {
+          return path.substr(0, prefix.length + 1) === (prefix + '/');
+        });
+
+        if (existingPersonaPrefix) {
+          path = path.substr(existingPersonaPrefix.length);
+        }
+
+        if (path.length) {
+          return workflowPrefix + prefix + path;
         } else {
-          return result + '/';
+          return workflowPrefix + prefix + '/';
         }
       }
 
     };
+
+    self.getAllPrefixes = function(req) {
+      var workflow = self.apos.modules['apostrophe-workflow'];
+      var prefixes = [];
+      _.each(self.personas, function(persona) {
+        if (workflow) {
+          prefixes.push(persona.prefixes[workflow.liveify(req.locale)]);
+        } else if (persona.prefix) {
+          prefixes.push(persona.prefix);
+        }
+      });
+      return prefixes;
+    };
+
   }
 };
