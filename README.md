@@ -98,13 +98,13 @@ Since a single doc object serves all personas, the persona prefix does not becom
 
 ## Constructing links to a specific persona
 
-Normally, links generated to pages on the site will have the same persona prefix that is already present in the address bar for the current page.
+Normally, links generated to pages or pieces on the site will have the same persona prefix that is already present in the address bar for the current page.
 
 However it is possible to create link widgets that link to a user-specified persona.
 
 To do that, just create your own link widget as you normally do, and include a field called `linkToPersona`, for which the choices must exactly match the persona names in your `apostrophe-personas` configuration. You may also specify the value `''` (empty string) with the label `Universal`.
 
-Make sure the widget also has a `joinByOne` or `joinByArray` field whose `withType` property is set to `apostrophe-page`. Note that it must be at the same level of the schema.
+Make sure the widget also has a `joinByOne` or `joinByArray` field whose `withType` property is set to `apostrophe-page`, or to a piece type which has corresponding pieces-pages on the site (or otherwise generates a valid `_url` property when loaded). Note that it must be at the same level of the schema.
 
 When you do so, `apostrophe-personas` will automatically detect this situation and correct the generated links to match the specified persona.
 
