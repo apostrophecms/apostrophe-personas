@@ -103,6 +103,7 @@ module.exports = {
         }
       });
       urlPersona = urlPersona && urlPersona.name;
+      req.urlPersona = urlPersona;
       if (addSlash) {
         return res.redirect(req.url);
       }
