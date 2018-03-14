@@ -4,7 +4,7 @@
   "description": "Specialize the content of each page of an Apostrophe site based on the user's primary affiliation (employee versus employer, truck vs. car, etc)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/test1.js && eslint ."
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,8 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^3.5.3"
+  },
+  "dependencies": {
+    "apostrophe": "^2.49.0"
   }
 }
