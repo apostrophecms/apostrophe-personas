@@ -162,7 +162,6 @@ describe('Personas Module', function() {
     req.Referrer = apos.baseUrl
     req.url = '/foo/bar/'
     req.res.redirect = (url) => {
-      console.log('redirect', url, req.session.persona, req.url)
       assert(url === `/${req.session.persona}${req.url}`, 'redirects to /PERSONA/URL')
       done()
     }
@@ -176,35 +175,59 @@ describe('Personas Module', function() {
   /**
    * Unit tests
    **/
-  it('test addPrexix', function (done) {
+  it('getAllPrefixes returns correct values', function (done) {
     const module = apos.modules['apostrophe-personas']
-    assert(typeof module.addPrefix === 'function', 'self.addPrefix exists as function')
+    const getAllPrefixes = module.getAllPrefixes
+    let req = apos.tasks.getAnonReq()
+    
+    const hashPrefixes = (arr) => {
+      return arr.sort().reduce((acc, cur) => {
+        return acc += cur
+      }, '')
+    }
+
+    const definedPrefixes = hashPrefixes(module.personas.map(persona => persona.prefix))
+
+    req.method = 'GET'
+    req.session = {persona: 'employee'} // mock persona
+    req.headers = {
+      'user-agent': userAgents.desktop
+    }
+    req.data = {}
+    req.Referrer = apos.baseUrl
+    req.url = '/foo/bar/'
+
+    const allPref =  getAllPrefixes(req)
+
+    assert(definedPrefixes === hashPrefixes(allPref), 'Computed available prefixes should equal configured available prefixes')
+
     done()
   })
 
-  // check referrer
-  
-  // check session
- 
- /*
-  it('A request with a persona attribute should add persona to session', function (done) {
-    let req = apos.tasks.getReq();
-    req.query.persona = "employer"
-    assert(req.session && !req.session.persona);
+  it('addPrefix works under a variety of conditions', function (done) {
+    const module = apos.modules['apostrophe-personas']
+    const addPrefix = module.addPrefix
+    // perform a hash against defined prefixes for comparison
 
-    return apos.pages.find(req, { slug: '/employee/foo' }).toObject(function(err, page) {
-      console.log(err, req, page);
-      assert(!err);
-      done();
-    });
-  });
-*/
-  // test unassigned persona
-  
-  // test persona switcher - assign
-  
-  // test persona-switcher - change
+    let req = apos.tasks.getAnonReq()
+    
+    req.method = 'GET'
+    req.session = {persona: 'employee'} // mock persona
+    req.headers = {
+      'user-agent': userAgents.desktop
+    }
+    req.data = {}
+    req.Referrer = apos.baseUrl
+    req.url = '/foo/bar/'
+    req.res.redirect = (url) => {
+      assert(url === `/${req.session.persona}${req.url}`, 'redirects to /PERSONA/URL')
+      done()
+    }
 
-  // test persona-switcher - reset
-  
+    assert(typeof addPrefix === 'function', 'self.addPrefix exists as function')
+
+    const prefixed = addPrefix(req, 'employee', req.url)
+    assert(prefixed === "/employee/foo/bar/")
+    done()
+  })
 });
