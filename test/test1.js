@@ -6,6 +6,13 @@ describe('Personas Module', function() {
 
   var apos;
   const basePath = "http://localhost:3000"
+  const userAgents = {
+    desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    googlebot: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    googleImageBot: "Googlebot-Image/1.0"
+  }
+
+  
 
   this.timeout(3000);
 
@@ -110,22 +117,68 @@ describe('Personas Module', function() {
   })
   
   // test module middleware for GET req
-  it('test persona middleware', function (done) {
+  it('test persona switcher - redirect via query', function (done) {
     const module = apos.modules['apostrophe-personas']
     const middleware = module.expressMiddleware
     let req = apos.tasks.getAnonReq()
     
     assert(module, 'has personas module')
     assert(typeof middleware === "function", 'has middleware object')
-
+    
+    req.method = 'GET'
     req.session = {}
+    req.headers = {
+      'user-agent': userAgents.desktop
+    }
+    req.query = {persona: "employee"}
+    req.data = {} // @@NOTE - personas middleware expects this, not sure where it comes from -pw
+    req.Referrer = apos.baseUrl
+    req.url = 'foo'
     
     // stub redirect
     req.res.redirect = (url) => {
-      console.log("Test stub - redirect url", url)
+      console.log("Test stub - redirect url", req)
       assert(url, 'redirect happens')
+      done()
     }
+    
+    middleware(req, req.res, () => {
+      assert(false, 'this should fail, redirect should have already happened')
+      done()
+    })
+  })
+  
+  it('test middleware - mock after persona is chose', function (done) {
+    const module = apos.modules['apostrophe-personas']
+    const middleware = module.expressMiddleware
+    let req = apos.tasks.getAnonReq()
+    
+    req.method = 'GET'
+    req.session = {persona: 'employee'} // mock persona
+    req.headers = {
+      'user-agent': userAgents.desktop
+    }
+    req.data = {}
+    req.Referrer = apos.baseUrl
+    req.url = '/foo/bar/'
+    req.res.redirect = (url) => {
+      console.log('redirect', url, req.session.persona, req.url)
+      assert(url === `/${req.session.persona}${req.url}`, 'redirects to /PERSONA/URL')
+      done()
+    }
+    
+    middleware(req, req.res, () => {
+      console.log('middleware returns', req)
+      assert()
+    })
+  })
 
+  /**
+   * Unit tests
+   **/
+  it('test addPrexix', function (done) {
+    const module = apos.modules['apostrophe-personas']
+    assert(typeof module.addPrefix === 'function', 'self.addPrefix exists as function')
     done()
   })
 

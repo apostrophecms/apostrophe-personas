@@ -19,6 +19,7 @@ module.exports = {
   construct: function(self, options) {
 
     self.composePersonas = function() {
+      console.log('self.composePersonas', self)
       _.each(self.options.personas, function(persona) {
         if (!persona.label) {
           persona.label = persona.name;
@@ -40,14 +41,14 @@ module.exports = {
     // to incorporate the persona when appropriate.
 
     self.expressMiddleware = function(req, res, next) {
-      console.log('HELLOW MODEUL')
+      console.log('self.expressMiddleware')
 
       if (req.method !== 'GET') {
         console.log("not get")
         return next();
       }
 
-      console.log("is get")
+      console.log("eM 1, is get")
       var workflow = self.apos.modules['apostrophe-workflow'];
 
       // If a user clicks on the official persona switcher, this always
@@ -55,17 +56,20 @@ module.exports = {
       // After that the persona prefix is sufficient so redirect to get
       // rid of the query
       if (req.query.persona) {
-        console.log("has persona")
+        console.log("eM2, has persona", req.query.persona)
         req.session.nextPersona = req.query.persona;
         req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
         req.url = req.url.replace(/\?$/, '');
         return res.redirect(req.url);
       }
+
       if (req.session.nextPersona) {
-        console.log("has nexty persona")
+        console.log("eM3, has nextPersona")
         req.session.persona = req.session.nextPersona;
         delete req.session.nextPersona;
       }
+
+      console.log('eM3.5')
 
       // Find the persona suggested by the URL prefix and adjust req.url
       // after capturing that information.
@@ -108,7 +112,7 @@ module.exports = {
         }
       });
       
-      console.log("urlPerson", urlPersona)
+      console.log("eM4 urlPersona", urlPersona)
       urlPersona = urlPersona && urlPersona.name;
       req.urlPersona = urlPersona;
       if (addSlash) {
@@ -138,10 +142,12 @@ module.exports = {
       // By intention, they will also index the persona switcher links.
       var agent = req.headers['user-agent'];
       if (urlPersona && agent && agent.match(/bot/i)) {
+        console.log('eM, is bot')
         req.session.persona = urlPersona;
       }
 
       if (req.session.persona && (!urlPersona)) {
+        console.log('eM, do redirect', req.url)
         // Add the persona prefix to the URL and redirect.
         return res.redirect(self.addPrefix(req, req.session.persona, req.url));
       }
@@ -151,8 +157,8 @@ module.exports = {
         req.data.persona = req.persona;
       }
 
+      console.log('referrer', self.apos.baseUrl)
       return next();
-
       function ourReferrer(req) {
         console.log("YO, referrer")
         // TODO must recognize all valid names for site, even
