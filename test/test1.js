@@ -42,6 +42,7 @@ describe('Personas Module', function() {
         return callback(null);
       },
       afterListen: function(err) {
+        console.log('1e', err)
         assert(!err);
         done();
       }
