@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block beforeMain %}
+  <div class="block hero">
+    <div class="inner">
+      <div class="hero-text">
+		<h2><a href="{{ data.home._url }}">{{ data.home.title }}</a></h2>
+        <h4>Welcome to my first Apostrophe site!</h4>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block main %}
+  <div class="main-content">
+    {{ apos.singleton(data.page, 'textBlock', 'apostrophe-rich-text', {
+      toolbar: [ 'Bold', 'Italic' ]
+    }) }}
+  </div>
+  <div>
+  {{ apos.singleton(data.page, 'heroPic', 'apostrophe-images', {
+    limit: 1,
+    size: 'one-half'
+  }) }}
+  </div>
+{% endblock %}
+

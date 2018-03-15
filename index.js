@@ -40,11 +40,14 @@ module.exports = {
     // to incorporate the persona when appropriate.
 
     self.expressMiddleware = function(req, res, next) {
+      console.log('HELLOW MODEUL')
 
       if (req.method !== 'GET') {
+        console.log("not get")
         return next();
       }
 
+      console.log("is get")
       var workflow = self.apos.modules['apostrophe-workflow'];
 
       // If a user clicks on the official persona switcher, this always
@@ -52,12 +55,14 @@ module.exports = {
       // After that the persona prefix is sufficient so redirect to get
       // rid of the query
       if (req.query.persona) {
+        console.log("has persona")
         req.session.nextPersona = req.query.persona;
         req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
         req.url = req.url.replace(/\?$/, '');
         return res.redirect(req.url);
       }
       if (req.session.nextPersona) {
+        console.log("has nexty persona")
         req.session.persona = req.session.nextPersona;
         delete req.session.nextPersona;
       }
@@ -102,6 +107,8 @@ module.exports = {
           return true;
         }
       });
+      
+      console.log("urlPerson", urlPersona)
       urlPersona = urlPersona && urlPersona.name;
       req.urlPersona = urlPersona;
       if (addSlash) {
@@ -147,6 +154,7 @@ module.exports = {
       return next();
 
       function ourReferrer(req) {
+        console.log("YO, referrer")
         // TODO must recognize all valid names for site, even
         // in a setup with many localized hostnames
         return req.get('Referrer') && (req.get('Referrer').indexOf(self.apos.baseUrl) === 0);
