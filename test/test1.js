@@ -12,10 +12,8 @@ describe('Personas Module', function() {
     googleImageBot: "Googlebot-Image/1.0"
   }
 
-  
-
   this.timeout(3000);
-
+  
   after(function() {
     apos.db.dropDatabase();
   });
@@ -204,7 +202,7 @@ describe('Personas Module', function() {
     done()
   })
 
-  it('addPrefix works under a variety of conditions', function (done) {
+  it('addPrefix works', function (done) {
     const module = apos.modules['apostrophe-personas']
     const addPrefix = module.addPrefix
     // perform a hash against defined prefixes for comparison
@@ -230,4 +228,5 @@ describe('Personas Module', function() {
     assert(prefixed === "/employee/foo/bar/")
     done()
   })
+
 });
