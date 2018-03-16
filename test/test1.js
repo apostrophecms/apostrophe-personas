@@ -62,7 +62,6 @@ describe('Personas Module', function() {
         return callback(null);
       },
       afterListen: function(err) {
-        console.log('1e', err)
         assert(!err);
         done();
       }
@@ -83,7 +82,6 @@ describe('Personas Module', function() {
 
     return request({url: `${basePath}/?persona=employee`, jar: j}, 'GET')
     .on('response', res => {
-      console.log("res", res.toJSON())
       assert(true)
       done()
     })
@@ -135,7 +133,6 @@ describe('Personas Module', function() {
     
     // stub redirect
     req.res.redirect = (url) => {
-      console.log("Test stub - redirect url", req)
       assert(url, 'redirect happens')
       done()
     }
@@ -165,7 +162,6 @@ describe('Personas Module', function() {
     }
     
     middleware(req, req.res, () => {
-      console.log('middleware returns', req)
       assert()
     })
   })
