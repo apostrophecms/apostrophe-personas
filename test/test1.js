@@ -15,6 +15,7 @@ describe('Personas Module', function() {
   this.timeout(3000);
   
   after(function() {
+    console.log('Clean up');
     apos.db.dropDatabase();
   });
 
@@ -226,7 +227,7 @@ describe('Personas Module', function() {
     done()
   })
 
-  it('Test ourReferrer', function (done) {
+  it('ourReferrer works', function (done) {
     const module = apos.modules['apostrophe-personas']
     let req = apos.tasks.getAnonReq()
     
@@ -262,4 +263,47 @@ describe('Personas Module', function() {
     
     done()
   })
+
+  it('composePersonas works', function (done) {
+    const module = apos.modules['apostrophe-personas']
+    const personasInit = JSON.stringify(module.personas)
+    
+    module.composePersonas()
+
+    const personasComposed = JSON.stringify(module.personas) 
+
+    assert(personasInit === personasComposed, 'If app definition used the verbose personas format, composePersonas should not change anything')
+
+    done()
+  })
+
+  it('inPersona works', function (done) {
+    console.log(Object.keys(apos.modules));
+    const module = apos.modules['apostrophe-areas'];
+    const inPersona = module.inPersona;
+
+    assert(typeof inPersona === 'function');
+
+    // some very naive widgets
+    const widgetNoPersona = {foo: "bar"};
+    const widgetPersona = {foo: "bar", persona: "employee"};
+
+    let req = apos.tasks.getAnonReq();
+    
+    assert(inPersona(req, widgetNoPersona) === true, '1. widget with no persona always returns true');
+    
+    assert(inPersona(req, widgetPersona) === true, '2. widget with persona returns true if req has no persona');
+    
+    req.persona = 'employer';
+    
+  //  assert(inPersona(req, widgetPersona) === false, '3. widget with persona returns false if req has wrong persona');
+    
+    assert(inPersona(req, widgetNoPersona), '4. widget with no persona returns true for req with any persona');
+
+    req.persona = 'employee';
+    
+    assert(inPersona(req, widgetPersona), '5. widget returns true for correct persona');
+
+    done();
+  });
 });
