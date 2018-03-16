@@ -25,6 +25,7 @@ describe('Personas Module', function() {
   it('should be a property of the apos object', function(done) {
     apos = require('apostrophe')({
       testModule: true,
+      baseUrl: 'http://localhost:3000',
 
       modules: {
         'apostrophe-pages': {
@@ -143,7 +144,7 @@ describe('Personas Module', function() {
     })
   })
   
-  it('test middleware - mock after persona is chose', function (done) {
+  it('test middleware - mock after persona is chosen', function (done) {
     const module = apos.modules['apostrophe-personas']
     const middleware = module.expressMiddleware
     let req = apos.tasks.getAnonReq()
@@ -208,10 +209,10 @@ describe('Personas Module', function() {
     req.method = 'GET'
     req.session = {persona: 'employee'} // mock persona
     req.headers = {
-      'user-agent': userAgents.desktop
+      'user-agent': userAgents.desktop,
+      'Referrer': apos.baseUrl
     }
     req.data = {}
-    req.Referrer = apos.baseUrl
     req.url = '/foo/bar/'
     req.res.redirect = (url) => {
       assert(url === `/${req.session.persona}${req.url}`, 'redirects to /PERSONA/URL')
@@ -225,4 +226,40 @@ describe('Personas Module', function() {
     done()
   })
 
+  it('Test ourReferrer', function (done) {
+    const module = apos.modules['apostrophe-personas']
+    let req = apos.tasks.getAnonReq()
+    
+    req.method = 'GET'
+    req.session = {persona: 'employee'} // mock persona
+    req.headers = {
+      'user-agent': userAgents.desktop,
+      'Referrer': "definitely invalid"
+    }
+    req.data = {}
+    req.get = function (attr) {
+      return this.headers[attr]
+    }.bind(req)
+    req.url = '/foo/bar/'
+    
+    assert(typeof module.ourReferrer === 'function')
+    assert(req.get('Referrer') === "definitely invalid", 'req object gets referrer')
+    assert(module.ourReferrer(req) === false, "Invalid domain fails our referrer")
+    
+    req.headers = {
+      'user-agent': userAgents.desktop,
+      'Referrer': apos.baseUrl
+    }
+    
+    assert(module.ourReferrer(req) === true, "domain fails our referrer")
+    
+    req.headers = {
+      'user-agent': userAgents.desktop,
+      'Referrer': `${apos.baseUrl}/foo/bar/baz/etc`
+    }
+    
+    assert(module.ourReferrer(req) === true, "domain fails our referrer")
+    
+    done()
+  })
 });
