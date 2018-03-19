@@ -25,19 +25,29 @@ describe('Personas Module', function() {
         'apostrophe-pages': {
           park: [
             {
-              slug: '/tc-related',
+              slug: '/',
               type: 'home',
-              persona: 'tc',
-              parkedId: 'tc-related',
               published: true,
-              title: 'TC Related',
+              title: 'Home Page',
               body: {
                 type: 'area',
                 items: [
                   {
-                    _id: 'tc001',
-                    type: 'apostrophe-rich-text',
-                    content: 'TC Page'
+                    _id: "2r_home",
+                    persona: "2r",
+                    type: "apostrophe-rich-text",
+                    content: "<p>2R RELATED CONTENT</p>\n"
+                  },
+                  {
+                    _id: "2c_home",
+                    persona: "tc",
+                    type: "apostrophe-rich-text",
+                    content: "<p>TC RELATED CONTENT</p>\n"
+                  },
+                  {
+                    _id: "un_home",
+                    type: "apostrophe-rich-text",
+                    content: "<p>Universnale home page widget</p>"
                   }
                 ]
               }
@@ -46,10 +56,8 @@ describe('Personas Module', function() {
               slug: '/2r-related',
               type: 'home',
               persona: '2r',
-              parkedId: '2r-related',
               published: true,
-              title: '2R Related',
-              body: '2R related page'
+              title: '2R Related'
             }
           ],
           types: [
@@ -91,7 +99,7 @@ describe('Personas Module', function() {
     });
   });
 
-  it('2. Test initial page load', function() {
+  it('2. Test initial page load -- no persona', function() {
     const opts = {
       url: basePath,
       jar: j,
@@ -104,7 +112,8 @@ describe('Personas Module', function() {
     return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
+      assert(res.toJSON().body.indexOf('2R RELATED CONTENT') >= 0, 'Has 2R related content');
+      assert(res.toJSON().body.indexOf('TC RELATED CONTENT') >= 0, 'Has TC related content');
     });
   });
 
@@ -123,6 +132,8 @@ describe('Personas Module', function() {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.toJSON().request.uri.pathname === '/tc/');
+      assert(res.toJSON().body.indexOf('TC RELATED CONTENT' >= 0), 'TC persona sees tc related widget');
+      assert(res.toJSON().body.indexOf('2R RELATED CONTENT' < 0), 'TC persona DOES NOT SEE 2R related widget');
     });
   });
 
@@ -164,7 +175,7 @@ describe('Personas Module', function() {
 
   it('6. Visit persona page sets persona session', function() {
     const opts = {
-      url: basePath + 'tc-related',
+      url: basePath + '2r-related',
       method: 'GET',
       jar: j1,
       headers: {
@@ -191,7 +202,7 @@ describe('Personas Module', function() {
     return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.req.path === '/tc/', 'Redirects to response specific path');
+      assert(res.req.path === '/2r/', 'Redirects to response specific path');
     });
   });
 
