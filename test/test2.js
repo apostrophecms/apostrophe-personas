@@ -18,24 +18,38 @@ describe('Personas Module', function() {
   this.timeout(3000);
   
   after(function() {
-    apos.db.dropDatabase();
+//    apos.db.dropDatabase();
   });
 
   /// ///
   // EXISTENCE
   /// ///
 
-  it('1. Should be a property of the apos object', function(done) {
+  it('1. Module should be a property of the apos object', function(done) {
     apos = require('apostrophe')({
       testModule: true,
       baseUrl: basePath,
-
       modules: {
         'apostrophe-pages': {
           park: [
-            {slug: '/', type: 'home'},
-            {slug: '/tc-related', type: 'home', persona:'tc'},
-            {slug: '/2r-related', type: 'home', persona:'2r'},
+						{ 
+							slug: '/tc-related',
+							type: 'home',
+							persona:'tc',
+							parkedId: 'tc-related',
+              published: true,
+							title: 'TC Related',
+              body: 'TC related page'
+						},
+						{
+							slug: '/2r-related',
+							type: 'home',
+							persona:'2r',
+							parkedId: '2r-related',
+              published: true,
+							title: '2R Related',
+              body: '2R related page'
+						}          
           ],
           types: [
             {
@@ -94,7 +108,7 @@ describe('Personas Module', function() {
     })
   });
   
-  it('3. Pass persona as query should set persona on session', function(done) {
+  it('3. Passing persona as query should set persona on session', function(done) {
     const opts = {
       url: basePath, 
       method: 'GET',
@@ -108,7 +122,7 @@ describe('Personas Module', function() {
     request(opts, (err, res) => {
         assert(!err);
         assert(res.statusCode === 200, 'req success');
-        assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
+        assert(res.toJSON().request.uri.pathname === '/2r/');
         done();
     });
   });
@@ -136,11 +150,12 @@ describe('Personas Module', function() {
       url: basePath, 
       method: 'GET',
       jar: j1,
+
       headers: {
         Referrer: basePath
       }
     } 
-
+    
     request(opts, (err, res) => {
         assert(!err);
         assert(res.statusCode === 200, 'req success');
@@ -152,7 +167,7 @@ describe('Personas Module', function() {
   
   it('6. Visit persona page sets persona session', function(done) {
     const opts = {
-      url: basePath+'tc-related',
+      url: basePath + 'tc-related',
       method: 'GET',
       jar: j1,
       headers: {
@@ -161,7 +176,6 @@ describe('Personas Module', function() {
     } 
 
     request(opts, (err, res) => {
-        console.log("><>", err, res.statusCode)
         assert(!err);
         assert(res.statusCode === 200, 'req success');
         done();
@@ -179,7 +193,6 @@ describe('Personas Module', function() {
     } 
 
     request(opts, (err, res) => {
-        console.log('tcre', res.req.path);
         assert(!err);
         assert(res.statusCode === 200, 'req success');
         assert(res.req.path === '/tc/', 'Redirects to response specific path');
