@@ -1,5 +1,5 @@
 var assert = require('assert');
-var request = require('request');
+var rp = require('request-promise');
 
 describe('Personas Module', function() {
 
@@ -23,7 +23,8 @@ describe('Personas Module', function() {
   it('should be a property of the apos object', function(done) {
     apos = require('apostrophe')({
       testModule: true,
-      baseUrl: 'http://localhost:3000',
+      baseUrl: 'http://localhost:4000',
+      port: 4000,
 
       modules: {
         'apostrophe-pages': {
@@ -62,6 +63,7 @@ describe('Personas Module', function() {
         return callback(null);
       },
       afterListen: function(err) {
+        console.log("init err", err);
         assert(!err);
         done();
       }
@@ -77,18 +79,11 @@ describe('Personas Module', function() {
     });
   });
 
-  it('Test request for persona via http', function (done) {
-    let j = request.jar();
-
-    return request({url: `${basePath}/?persona=employee`, jar: j}, 'GET')
-      .on('response', res => {
+  it('Test request for persona via http', function () {
+    const j = rp.jar();
+    rp({url: basePath, qs: {persona: 'employee'}, jar: j})
+      .then('response', res => {
         assert(true);
-        done();
-      })
-      .on('error', err => {
-        console.log("ERR", err);
-        assert(false);
-        done();
       });
   });
 

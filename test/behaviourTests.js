@@ -1,7 +1,7 @@
 var assert = require('assert');
-var request = require('request');
-var j = request.jar();
-var j1 = request.jar();
+var rp = require('request-promise');
+var j = rp.jar();
+var j1 = rp.jar();
 
 describe('Personas Module', function() {
 
@@ -31,7 +31,16 @@ describe('Personas Module', function() {
               parkedId: 'tc-related',
               published: true,
               title: 'TC Related',
-              body: 'TC related page'
+              body: {
+                type: 'area',
+                items: [
+                  {
+                    _id: 'tc001',
+                    type: 'apostrophe-rich-text',
+                    content: 'TC Page'
+                  }
+                ]
+              }
             },
             {
               slug: '/2r-related',
@@ -82,7 +91,7 @@ describe('Personas Module', function() {
     });
   });
 
-  it('2. Test initial page load', function(done) {
+  it('2. Test initial page load', function() {
     const opts = {
       url: basePath,
       jar: j,
@@ -92,34 +101,32 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
-      done();
     });
   });
 
-  it('3. Passing persona as query should set persona on session', function(done) {
+  it('3. Passing persona as query should set persona on session', function() {
     const opts = {
       url: basePath,
       method: 'GET',
       jar: j,
-      qs: {persona: '2r'},
+      qs: {persona: 'tc'},
       headers: {
         Referrer: basePath
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.toJSON().request.uri.pathname === '/2r/');
-      done();
+      assert(res.toJSON().request.uri.pathname === '/tc/');
     });
   });
 
-  it('4. Subsequent visit should load persona path', function(done) {
+  it('4. Subsequent visit should load persona path', function() {
     const opts = {
       url: basePath,
       method: 'GET',
@@ -129,15 +136,14 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.req.path === '/2r/', 'Redirects to response specific path');
-      done();
+      assert(res.req.path === '/tc/', 'Redirects to response specific path');
     });
   });
 
-  it('5. New session loads generic home page', function(done) {
+  it('5. New session loads generic home page', function() {
     const opts = {
       url: basePath,
       method: 'GET',
@@ -148,16 +154,15 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
       assert(res.req.path === '/', 'loads base path');
-      done();
     });
   });
 
-  it('6. Visit persona page sets persona session', function(done) {
+  it('6. Visit persona page sets persona session', function() {
     const opts = {
       url: basePath + 'tc-related',
       method: 'GET',
@@ -167,14 +172,13 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      done();
     });
   });
 
-  it('7. Subsequent request is forwarded to persona url', function(done) {
+  it('7. Subsequent request is forwarded to persona url', function() {
     const opts = {
       url: basePath,
       method: 'GET',
@@ -184,15 +188,14 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.req.path === '/tc/', 'Redirects to response specific path');
-      done();
     });
   });
 
-  it('8. Visit persona page loads default page, sets cookie', function(done) {
+  it('8. Visit persona page loads default page, sets cookie', function() {
     const opts = {
       url: basePath,
       method: 'GET',
@@ -203,15 +206,14 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
-      done();
     });
   });
 
-  it('9. Subsequent visit to basePath redirects to persona base', function(done) {
+  it('9. Subsequent visit to basePath redirects to persona base', function() {
     const opts = {
       url: basePath,
       method: 'GET',
@@ -221,11 +223,10 @@ describe('Personas Module', function() {
       }
     };
 
-    request(opts, (err, res) => {
+    return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.req.path === '/tc/', 'Redirects to persona specific path');
-      done();
     });
   });
 });
