@@ -36,6 +36,12 @@ module.exports = {
       }
     });
 
+    self.ourReferrer = function(req) {
+      // TODO must recognize all valid names for site, even
+      // in a setup with many localized hostnames
+      return req.get('Referrer') && (req.get('Referrer').indexOf(self.apos.baseUrl) === 0);
+    };
+
     // Set `req.persona` if appropriate. Redirect generic URLs
     // to incorporate the persona when appropriate.
 
@@ -87,7 +93,7 @@ module.exports = {
           addSlash = true;
           return true;
         }
-        if (prefix && 
+        if (prefix &&
           (req.url.substr(workflowPrefix.length, prefix.length + 1) === (prefix + '/'))) {
           // The workflow prefix is really in the slug, but the
           // persona prefix is not. So snip it out to let
@@ -120,7 +126,7 @@ module.exports = {
       // pages as we don't have the page yet here.
 
       if (urlPersona) {
-        if (ourReferrer(req)) {
+        if (self.ourReferrer(req)) {
           req.session.persona = urlPersona;
         }
       }
@@ -145,12 +151,6 @@ module.exports = {
       }
 
       return next();
-
-      function ourReferrer(req) {
-        // TODO must recognize all valid names for site, even
-        // in a setup with many localized hostnames
-        return req.get('Referrer') && (req.get('Referrer').indexOf(self.apos.baseUrl) === 0);
-      }
 
     };
 
