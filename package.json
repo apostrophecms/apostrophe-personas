@@ -4,7 +4,7 @@
   "description": "Specialize the content of each page of an Apostrophe site based on the user's primary affiliation (employee versus employer, truck vs. car, etc)",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/unitTests.js && mocha ./test/behaviourTests.js && eslint ."
+    "test": "mocha ./test/ && eslint ."
   },
   "repository": {
     "type": "git",

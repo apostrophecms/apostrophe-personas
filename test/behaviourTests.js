@@ -7,7 +7,7 @@ describe('Personas Module', function() {
 
   var apos;
 
-  const basePath = "http://localhost:3000/";
+  const basePath = "http://localhost:3333/";
   this.timeout(3000);
 
   after(function() {
@@ -22,6 +22,9 @@ describe('Personas Module', function() {
       testModule: true,
       baseUrl: basePath,
       modules: {
+        'apostrophe-express': {
+          port: 3333
+        },
         'apostrophe-pages': {
           park: [
             {

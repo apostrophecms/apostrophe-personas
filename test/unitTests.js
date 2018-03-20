@@ -24,9 +24,10 @@ describe('Personas Module', function() {
     apos = require('apostrophe')({
       testModule: true,
       baseUrl: 'http://localhost:4000',
-      port: 4000,
-
       modules: {
+        'apostrophe-express': {
+            port: 4242
+        },
         'apostrophe-pages': {
           park: [{slug: '/', type: 'home'}],
           types: [
