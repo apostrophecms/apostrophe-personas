@@ -26,7 +26,7 @@ describe('Personas Module', function() {
       baseUrl: 'http://localhost:4000',
       modules: {
         'apostrophe-express': {
-            port: 4242
+          port: 4242
         },
         'apostrophe-pages': {
           park: [{slug: '/', type: 'home'}],
