@@ -57,16 +57,23 @@ module.exports = {
       // changes their cookie immediately, no matter what the old setting was.
       // After that the persona prefix is sufficient so redirect to get
       // rid of the query
-      if (req.query.persona) {
+      if (req.query.persona && _.find(self.personas, { name: req.query.persona })) {
         req.session.nextPersona = req.query.persona;
         req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
         req.url = req.url.replace(/\?$/, '');
+        req.url = self.addPrefix(req, req.query.persona, req.url);
         return res.redirect(req.url);
       }
       if (req.session.nextPersona) {
         req.session.persona = req.session.nextPersona;
         delete req.session.nextPersona;
       }
+
+      // A session could outlive a persona
+      if (req.session.persona && (!_.find(self.personas, { name: req.session.persona }))) {
+        delete req.session.persona;
+      }
+
 
       // Find the persona suggested by the URL prefix and adjust req.url
       // after capturing that information.
