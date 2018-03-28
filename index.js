@@ -30,6 +30,32 @@ module.exports = {
       self.personas = self.options.personas;
     };
 
+    self.modulesReady = function() {
+      var workflow = self.apos.modules['apostrophe-workflow'];
+      var inferredAll = false;
+      if (!workflow) {
+        return;
+      }
+      _.each(self.personas, function(persona) {
+        if (!persona.prefixes) {
+          persona.prefixes = {};
+          self.apos.utils.warn('Warning: workflow module is in use and the prefixes option is not configured for the ' + persona.name + ' persona, falling back to ' + persona.prefix + ' which will not be translated');
+          inferredAll = true;
+        }
+        _.each(workflow.locales, function(locale, name) {
+          if (name.match(/-draft$/)) {
+            return;
+          }
+          if (!persona.prefixes[name]) {
+            persona.prefixes[name] = persona.prefix || ('/' + persona.name);
+            if (!inferredAll) {
+              self.apos.utils.warn('Warning: workflow module is in use and the prefixes option for the ' + persona.name + ' persona has no setting for the ' + name + ' locale, falling back to ' + persona.prefix + ' which will not be translated');
+            }
+          }
+        });
+      })
+    };
+
     self.addHelpers({
       personas: function() {
         return self.personas;
