@@ -40,7 +40,7 @@ modules: {
 
 This module can optionally be used together with the `apostrophe-workflow` module. If so, **the workflow module must be configured first.**
 
-When workflow is present, any URL prefix for the workflow locale comes first, and the persona prefixes themselves can be localized. Here is an example.
+When workflow is present, any URL prefix for the workflow locale comes first, and the persona prefixes themselves **should** be localized. Here is an example.
 
 
 ```javascript
@@ -95,6 +95,8 @@ The resulting URLs look like:
 Both of these URLs reference the same persona, but in different locales.
 
 Since a single doc object serves all personas, the persona prefix does not become part of the slug in the database. The URL is rewritten dynamically as needed.
+
+If you do not specify the `prefixes` option, or leave out locales, a warning is printed, as an untranslated prefix is usually not what you really want.
 
 ## Constructing links to a specific persona
 
