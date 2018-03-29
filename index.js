@@ -8,7 +8,9 @@ module.exports = {
       'apostrophe-personas-areas',
       'apostrophe-personas-custom-pages',
       'apostrophe-personas-pages',
-      'apostrophe-personas-widgets'
+      'apostrophe-personas-widgets',
+      'apostrophe-personas-doc-type-manager',
+      'apostrophe-personas-pieces'
     ]
   },
 
@@ -73,7 +75,6 @@ module.exports = {
       if (req.session.persona && (!_.find(self.personas, { name: req.session.persona }))) {
         delete req.session.persona;
       }
-
 
       // Find the persona suggested by the URL prefix and adjust req.url
       // after capturing that information.
@@ -222,6 +223,8 @@ module.exports = {
       });
       return prefixes;
     };
+
+    self.apos.define('apostrophe-cursor', require('./lib/cursor.js'));
 
   }
 };
