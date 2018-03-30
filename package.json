@@ -1,6 +1,6 @@
 {
   "name": "apostrophe-personas",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Specialize the content of each page of an Apostrophe site based on the user's primary affiliation (employee versus employer, truck vs. car, etc)",
   "main": "index.js",
   "scripts": {
