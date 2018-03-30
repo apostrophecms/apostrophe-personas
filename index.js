@@ -55,7 +55,7 @@ module.exports = {
             }
           }
         });
-      })
+      });
     };
 
     self.addHelpers({
