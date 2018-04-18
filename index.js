@@ -148,20 +148,22 @@ module.exports = {
         return res.redirect(req.url);
       }
 
-      // Arriving at a generic page with a persona prefix will set the persona cookie of
-      // the user only if the referring URL is ours.
+      // Arriving at a generic page with a persona prefix will set the persona of
+      // the user immediately if the referring URL is ours.
       //
-      // Otherwise it is assumed to be a mistake based on natural search results,
-      // and their persona cookie stays unset until they express a clear preference.
+      // Otherwise it sets the persona for the next request if no information
+      // to the contrary is presented by then (scenario 2, step 2).
       //
-      // Exception: if the page is persona-specific, that does change
-      // req.session.persona for the very next access (but not this one),
-      // per Etienne's Scenario #2. This is implemented in pageBeforeSend of
+      // If the page is persona-specific, that also changes
+      // req.session.persona for the next access (but not this one).
+      // That is implemented in pageBeforeSend of
       // pages as we don't have the page yet here.
 
       if (urlPersona) {
         if (self.ourReferrer(req)) {
           req.session.persona = urlPersona;
+        } else {
+          req.session.nextPersona = urlPersona;
         }
       }
       req.data.urlPersona = urlPersona;
