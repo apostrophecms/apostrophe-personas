@@ -252,6 +252,18 @@ module.exports = {
       return prefixes;
     };
 
+    // Should return true if the user is an editor and thus
+    // should bypass the normal restrictions on whether they
+    // can see widgets and pieces for other personas, for
+    // editing purposes. If this definition ("anyone who is
+    // logged in is a potential editor") is not fine-grained
+    // enough for your purposes, override this method at
+    // project level
+
+    self.userIsEditor = function(req) {
+      return req.user;
+    };
+
     self.apos.define('apostrophe-cursor', require('./lib/cursor.js'));
 
   }
