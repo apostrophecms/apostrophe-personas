@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.1
+
+* If the request has a persona, pieces are correctly filtered out of query results, unless that user is an editor. This change was mistakenly left out of 2.2.0.
+* Two links to the same page may be made linking to different personas. Formerly reuse of objects prevented this as the code was patching the `_url` property of the same object twice.
+
 ## 2.2.0
 
 * If the request has a persona, pieces are correctly filtered out of query results, unless that user is an editor.
