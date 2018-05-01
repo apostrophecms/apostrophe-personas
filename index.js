@@ -285,7 +285,7 @@ module.exports = {
             return setImmediate(callback);
           }
         }, callback);
-      });
+      }, { safe: true });
     };
 
     self.apos.define('apostrophe-cursor', require('./lib/cursor.js'));
