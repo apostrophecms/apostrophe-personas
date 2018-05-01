@@ -29,10 +29,11 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^3.5.3",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "apostrophe": "^2.49.0",
+    "lodash": "^3.0.0"
   },
   "dependencies": {
-    "apostrophe": "^2.49.0",
     "request-promise": "^4.2.2"
   }
 }
