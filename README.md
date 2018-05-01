@@ -104,7 +104,9 @@ Normally, links generated to pages or pieces on the site will have the same pers
 
 However it is possible to create link widgets that link to a user-specified persona.
 
-To do that, just create your own link widget as you normally do, and include a field called `linkToPersona`, for which the choices must exactly match the persona names in your `apostrophe-personas` configuration. You may also specify the value `''` (empty string) with the label `Universal`.
+To do that, just create your own link widget as you normally do, and include a field called `linkToPersona`.
+
+> You may specify an empty `choices` array, in which case `apostrophe-personas` will fill in the choices for you. Or, you may specify the exact choices you want to offer, in which case they must exactly match the persona names in your `apostrophe-personas` configuration.
 
 Make sure the widget also has a `joinByOne` or `joinByArray` field whose `withType` property is set to `apostrophe-page`, or to a piece type which has corresponding pieces-pages on the site (or otherwise generates a valid `_url` property when loaded). Note that it must be at the same level of the schema.
 
