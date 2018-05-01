@@ -279,7 +279,7 @@ describe('Personas Module', function() {
 
     // some very naive widgets
     const widgetNoPersona = {foo: "bar"};
-    const widgetPersona = {foo: "bar", persona: "employee"};
+    const widgetPersona = {foo: "bar", personas: [ "employee" ]};
 
     let req = apos.tasks.getAnonReq();
 
