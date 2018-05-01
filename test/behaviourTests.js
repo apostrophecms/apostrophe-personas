@@ -29,6 +29,7 @@ describe('Personas Module', function() {
           park: [
             {
               slug: '/',
+              parkedId: 'home',
               type: 'home',
               published: true,
               title: 'Home Page',
@@ -37,13 +38,13 @@ describe('Personas Module', function() {
                 items: [
                   {
                     _id: "2r_home",
-                    persona: "2r",
+                    personas: [ "2r" ],
                     type: "apostrophe-rich-text",
                     content: "<p>2R RELATED CONTENT</p>\n"
                   },
                   {
                     _id: "2c_home",
-                    persona: "tc",
+                    personas: [ "tc" ],
                     type: "apostrophe-rich-text",
                     content: "<p>TC RELATED CONTENT</p>\n"
                   },
@@ -57,6 +58,7 @@ describe('Personas Module', function() {
             },
             {
               slug: '/2r-related',
+              parkedId: '2r-related',
               type: 'home',
               persona: '2r',
               published: true,
