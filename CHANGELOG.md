@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+* Support for multiple personas per widget. Note: a database migration is required. This migration does take time. However it is a safe migration (it will be executed when `apostrophe-migrations:migrate` is run with the `--safe` flag, which occurs while the previous generation of code is still live in Stagecoach deployment).
+* If a `linkToPersona` schema field has an empty `choices` array, choices are automatically supplied. You may still supply your own choices if you prefer but they must match the actual persona names (or a subset of them).
+* Dead code elimination.
+
 ## 2.2.1
 
 * If the request has a persona, pieces are correctly filtered out of query results, unless that user is an editor. This change was mistakenly left out of 2.2.0.
