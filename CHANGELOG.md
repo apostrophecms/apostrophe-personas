@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+* Fixed very short-lived bug that broke the display of universal widgets while a persona is in effect.
+
 ## 2.3.0
 
 * Support for multiple personas per widget. Note: a database migration is required. This migration does take time. However it is a safe migration (it will be executed when `apostrophe-migrations:migrate` is run with the `--safe` flag, which occurs while the previous generation of code is still live in Stagecoach deployment).

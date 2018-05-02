@@ -279,6 +279,7 @@ describe('Personas Module', function() {
 
     // some very naive widgets
     const widgetNoPersona = {foo: "bar"};
+    const widgetNoPersona2 = {foo: "bar", personas: []};
     const widgetPersona = {foo: "bar", personas: [ "employee" ]};
 
     let req = apos.tasks.getAnonReq();
@@ -292,6 +293,7 @@ describe('Personas Module', function() {
     //  assert(inPersona(req, widgetPersona) === false, '3. widget with persona returns false if req has wrong persona');
 
     assert(inPersona(req, widgetNoPersona), '4. widget with no persona returns true for req with any persona');
+    assert(inPersona(req, widgetNoPersona2), '4. widget with no persona (via empty array) returns true for req with any persona');
 
     req.persona = 'employee';
 
