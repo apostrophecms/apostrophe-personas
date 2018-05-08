@@ -74,120 +74,126 @@ module.exports = {
     // Set `req.persona` if appropriate. Redirect generic URLs
     // to incorporate the persona when appropriate.
 
-    self.expressMiddleware = function(req, res, next) {
+    self.expressMiddleware = {
 
-      if (req.method !== 'GET') {
-        return next();
-      }
+      before: 'apostrophe-global',
 
-      var workflow = self.apos.modules['apostrophe-workflow'];
+      middleware: function(req, res, next) {
 
-      // If a user clicks on the official persona switcher, this always
-      // changes their cookie immediately, no matter what the old setting was.
-      // After that the persona prefix is sufficient so redirect to get
-      // rid of the query
-      if (req.query.persona && _.find(self.personas, { name: req.query.persona })) {
-        req.session.nextPersona = req.query.persona;
-        req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
-        req.url = req.url.replace(/\?$/, '');
-        req.url = self.addPrefix(req, req.query.persona, req.url);
-        return res.redirect(req.url);
-      }
-      if (req.session.nextPersona) {
-        req.session.persona = req.session.nextPersona;
-        delete req.session.nextPersona;
-      }
-
-      // A session could outlive a persona
-      if (req.session.persona && (!_.find(self.personas, { name: req.session.persona }))) {
-        delete req.session.persona;
-      }
-
-      // Find the persona suggested by the URL prefix and adjust req.url
-      // after capturing that information.
-
-      var addSlash = false;
-
-      var urlPersona = _.find(self.personas, function(persona) {
-        var prefix;
-        var liveLocale = workflow && workflow.liveify(req.locale);
-        var workflowPrefix = '';
-        if (workflow) {
-          prefix = persona.prefixes[liveLocale];
-          workflowPrefix = (workflow.prefixes && workflow.prefixes[liveLocale]) || '';
-        } else {
-          prefix = persona.prefix;
+        if (req.method !== 'GET') {
+          return next();
         }
-        if (req.url.substr(0, workflowPrefix.length + 1) !== (workflowPrefix + '/')) {
-          // Unprefixed route like /login
-          workflowPrefix = '';
-        }
-        if (prefix && (req.url.substr(workflowPrefix.length) === prefix)) {
-          // handle /en/car as a full URL gracefully
-          req.url += '/';
-          addSlash = true;
-          return true;
-        }
-        if (prefix &&
-          (req.url.substr(workflowPrefix.length, prefix.length + 1) === (prefix + '/'))) {
-          // The workflow prefix is really in the slug, but the
-          // persona prefix is not. So snip it out to let
-          // apostrophe find it in the database:
-          //
-          // /fr/auto/driving becomes /fr/driving
-          //
-          // If there is no workflow prefix the default empty
-          // string just turns /auto/driving into /driving which
-          // is also what we want
-          req.url = req.url.substr(0, workflowPrefix.length) + req.url.substr(workflowPrefix.length + prefix.length);
-          return true;
-        }
-      });
-      urlPersona = urlPersona && urlPersona.name;
-      req.urlPersona = urlPersona;
-      if (addSlash) {
-        return res.redirect(req.url);
-      }
 
-      // Arriving at a generic page with a persona prefix will set the persona of
-      // the user immediately if the referring URL is ours.
-      //
-      // Otherwise it sets the persona for the next request if no information
-      // to the contrary is presented by then (scenario 2, step 2).
-      //
-      // If the page is persona-specific, that also changes
-      // req.session.persona for the next access (but not this one).
-      // That is implemented in pageBeforeSend of
-      // pages as we don't have the page yet here.
+        var workflow = self.apos.modules['apostrophe-workflow'];
 
-      if (urlPersona) {
-        if (self.ourReferrer(req)) {
+        // If a user clicks on the official persona switcher, this always
+        // changes their cookie immediately, no matter what the old setting was.
+        // After that the persona prefix is sufficient so redirect to get
+        // rid of the query
+        if (req.query.persona && _.find(self.personas, { name: req.query.persona })) {
+          req.session.nextPersona = req.query.persona;
+          req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
+          req.url = req.url.replace(/\?$/, '');
+          req.url = self.addPrefix(req, req.query.persona, req.url);
+          return res.redirect(req.url);
+        }
+        if (req.session.nextPersona) {
+          req.session.persona = req.session.nextPersona;
+          delete req.session.nextPersona;
+        }
+
+        // A session could outlive a persona
+        if (req.session.persona && (!_.find(self.personas, { name: req.session.persona }))) {
+          delete req.session.persona;
+        }
+
+        // Find the persona suggested by the URL prefix and adjust req.url
+        // after capturing that information.
+
+        var addSlash = false;
+
+        var urlPersona = _.find(self.personas, function(persona) {
+          var prefix;
+          var liveLocale = workflow && workflow.liveify(req.locale);
+          var workflowPrefix = '';
+          if (workflow) {
+            prefix = persona.prefixes[liveLocale];
+            workflowPrefix = (workflow.prefixes && workflow.prefixes[liveLocale]) || '';
+          } else {
+            prefix = persona.prefix;
+          }
+          if (req.url.substr(0, workflowPrefix.length + 1) !== (workflowPrefix + '/')) {
+            // Unprefixed route like /login
+            workflowPrefix = '';
+          }
+          if (prefix && (req.url.substr(workflowPrefix.length) === prefix)) {
+            // handle /en/car as a full URL gracefully
+            req.url += '/';
+            addSlash = true;
+            return true;
+          }
+          if (prefix &&
+            (req.url.substr(workflowPrefix.length, prefix.length + 1) === (prefix + '/'))) {
+            // The workflow prefix is really in the slug, but the
+            // persona prefix is not. So snip it out to let
+            // apostrophe find it in the database:
+            //
+            // /fr/auto/driving becomes /fr/driving
+            //
+            // If there is no workflow prefix the default empty
+            // string just turns /auto/driving into /driving which
+            // is also what we want
+            req.url = req.url.substr(0, workflowPrefix.length) + req.url.substr(workflowPrefix.length + prefix.length);
+            return true;
+          }
+        });
+        urlPersona = urlPersona && urlPersona.name;
+        req.urlPersona = urlPersona;
+        if (addSlash) {
+          return res.redirect(req.url);
+        }
+
+        // Arriving at a generic page with a persona prefix will set the persona of
+        // the user immediately if the referring URL is ours.
+        //
+        // Otherwise it sets the persona for the next request if no information
+        // to the contrary is presented by then (scenario 2, step 2).
+        //
+        // If the page is persona-specific, that also changes
+        // req.session.persona for the next access (but not this one).
+        // That is implemented in pageBeforeSend of
+        // pages as we don't have the page yet here.
+
+        if (urlPersona) {
+          if (self.ourReferrer(req)) {
+            req.session.persona = urlPersona;
+          } else {
+            req.session.nextPersona = urlPersona;
+          }
+        }
+        req.data.urlPersona = urlPersona;
+
+        // Bots always get content persona based on the prefix,
+        // otherwise they would never index persona pages properly.
+        // By intention, they will also index the persona switcher links.
+        var agent = req.headers['user-agent'];
+        if (urlPersona && agent && agent.match(/bot/i)) {
           req.session.persona = urlPersona;
-        } else {
-          req.session.nextPersona = urlPersona;
         }
-      }
-      req.data.urlPersona = urlPersona;
 
-      // Bots always get content persona based on the prefix,
-      // otherwise they would never index persona pages properly.
-      // By intention, they will also index the persona switcher links.
-      var agent = req.headers['user-agent'];
-      if (urlPersona && agent && agent.match(/bot/i)) {
-        req.session.persona = urlPersona;
-      }
+        if (req.session.persona && (!urlPersona)) {
+          // Add the persona prefix to the URL and redirect.
+          return res.redirect(self.addPrefix(req, req.session.persona, req.url));
+        }
 
-      if (req.session.persona && (!urlPersona)) {
-        // Add the persona prefix to the URL and redirect.
-        return res.redirect(self.addPrefix(req, req.session.persona, req.url));
-      }
+        if (req.session.persona) {
+          req.persona = req.session.persona;
+          req.data.persona = req.persona;
+        }
 
-      if (req.session.persona) {
-        req.persona = req.session.persona;
-        req.data.persona = req.persona;
-      }
+        return next();
 
-      return next();
+      }
 
     };
 

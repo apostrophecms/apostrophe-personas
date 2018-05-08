@@ -90,7 +90,7 @@ describe('Personas Module', function() {
   // test fail on non-get req
   it('middleware should not touch non-GET reqs', function (done) {
     const module = apos.modules['apostrophe-personas'];
-    const middleware = module.expressMiddleware;
+    const middleware = module.expressMiddleware.middleware;
     let req = apos.tasks.getAnonReq();
 
     assert(module, 'has personas module');
@@ -109,7 +109,7 @@ describe('Personas Module', function() {
   // test module middleware for GET req
   it('test persona switcher - redirect via query', function (done) {
     const module = apos.modules['apostrophe-personas'];
-    const middleware = module.expressMiddleware;
+    const middleware = module.expressMiddleware.middleware;
     let req = apos.tasks.getAnonReq();
 
     assert(module, 'has personas module');
@@ -139,7 +139,7 @@ describe('Personas Module', function() {
 
   it('test middleware - mock after persona is chosen', function (done) {
     const module = apos.modules['apostrophe-personas'];
-    const middleware = module.expressMiddleware;
+    const middleware = module.expressMiddleware.middleware;
     let req = apos.tasks.getAnonReq();
 
     req.method = 'GET';
