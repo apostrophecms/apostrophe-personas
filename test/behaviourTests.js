@@ -10,8 +10,8 @@ describe('Personas Module', function() {
   const basePath = "http://localhost:3333/";
   this.timeout(3000);
 
-  after(function() {
-    apos.db.dropDatabase();
+  after(function(done) {
+    require('apostrophe/test-lib/util').destroy(apos, done);
   });
 
   /// ///
