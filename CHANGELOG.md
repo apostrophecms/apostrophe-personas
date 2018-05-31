@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.3
+
+* Security: npm audit passing.
+
 ## 2.3.2
 
 * Persona middleware now runs before `apostrophe-global` middleware, so that persona-based URL generation can be applied properly to content loaded by that middleware.
