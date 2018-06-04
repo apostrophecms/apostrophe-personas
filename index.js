@@ -107,6 +107,11 @@ module.exports = {
           delete req.session.persona;
         }
 
+        if (req.query.persona === 'none') {
+          delete req.session.persona;
+          return res.redirect(req.url);
+        }
+
         // Find the persona suggested by the URL prefix and adjust req.url
         // after capturing that information.
 
