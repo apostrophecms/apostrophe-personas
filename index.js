@@ -30,6 +30,7 @@ module.exports = {
           persona.prefix = '/' + persona.name;
         }
       });
+
       self.personas = self.options.personas;
     };
 
@@ -90,7 +91,7 @@ module.exports = {
         // changes their cookie immediately, no matter what the old setting was.
         // After that the persona prefix is sufficient so redirect to get
         // rid of the query
-        if (req.query.persona && _.find(self.personas, { name: req.query.persona })) {
+        if ((req.query.persona && _.find(self.personas, { name: req.query.persona })) || req.query.persona === 'none') {
           req.session.nextPersona = req.query.persona;
           req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
           req.url = req.url.replace(/\?$/, '');
@@ -220,8 +221,13 @@ module.exports = {
         // Workflow prefix is not actually present, probably a route like /login
         workflowPrefix = '';
       }
-      var personaInfo = _.find(personas.personas, { name: persona });
-      var prefix = workflow ? personaInfo.prefixes[liveLocale] : personaInfo.prefix;
+      var personaInfo = (persona === 'none') ? 'none' : _.find(personas.personas, { name: persona });
+      var prefix;
+      if (personaInfo === 'none') {
+        prefix = '';
+      } else {
+        prefix = workflow ? personaInfo.prefixes[liveLocale] : personaInfo.prefix;
+      }
       if (url.match(/^(https?:)?\/\//)) {
         // Turn on the "slashes denote host" option
         var parsed = require('url').parse(url, false, true);
