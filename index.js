@@ -65,10 +65,29 @@ module.exports = {
       }
     });
 
+    // Sniff out whether the referring URL appears to match the site.
+    // This is meant to be a tolerant implementation that won't fail to
+    // say yes when it should, but prevents users from being denied a view
+    // of content for other personas just because they clicked a link on
+    // a completely unrelated site or via organic search. Considers
+    // both the `baseUrl` option and the `hostnames` option of
+    // `apostrophe-workflow`.
+
     self.ourReferrer = function(req) {
-      // TODO must recognize all valid names for site, even
-      // in a setup with many localized hostnames
-      return req.get('Referrer') && (req.get('Referrer').indexOf(self.apos.baseUrl) === 0);
+      var workflow = self.apos.modules['apostrophe-workflow'];
+      var hostnames = self.apos.baseUrl ? [ require('url').parse(self.apos.baseUrl, false, true).hostname ] : [];
+      if (workflow) {
+        hostnames = hostnames.concat(_.values(workflow.hostnames));
+      }
+      var referrer = req.get('Referrer');
+      if (!referrer) {
+        return false;
+      }
+      var parsed = require('url').parse(referrer);
+      var result = _.find(hostnames, function(hostname) {
+        return (hostname === parsed.hostname) || (('www.' + hostname) === parsed.hostname);
+      });
+      return !!result;
     };
 
     // Set `req.persona` if appropriate. Redirect generic URLs

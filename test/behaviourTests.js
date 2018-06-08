@@ -8,7 +8,7 @@ describe('Personas Module', function() {
   var apos;
 
   const basePath = "http://localhost:3333/";
-  this.timeout(3000);
+  this.timeout(5000);
 
   after(function(done) {
     require('apostrophe/test-lib/util').destroy(apos, done);

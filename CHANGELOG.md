@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.4
+
+* Referring URL check is now compatible with the `hostnames` option of `apostrophe-workflow`, ensuring that the persona prefix is accepted on the first access as long as it comes from a relevant site. If you are implementing any other kind of multisite system, you will want to override the `ourReferrer` method at project level to make the test more inclusive.
+
+## 2.3.3
+
+* Security: npm audit passing.
+
 ## 2.3.2
 
 * Persona middleware now runs before `apostrophe-global` middleware, so that persona-based URL generation can be applied properly to content loaded by that middleware.
