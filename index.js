@@ -86,6 +86,10 @@ module.exports = {
         }
 
         var workflow = self.apos.modules['apostrophe-workflow'];
+        
+        if (req.query.persona === 'none') {
+          delete req.session.persona;
+        }
 
         // If a user clicks on the official persona switcher, this always
         // changes their cookie immediately, no matter what the old setting was.
@@ -106,11 +110,6 @@ module.exports = {
         // A session could outlive a persona
         if (req.session.persona && (!_.find(self.personas, { name: req.session.persona }))) {
           delete req.session.persona;
-        }
-
-        if (req.query.persona === 'none') {
-          delete req.session.persona;
-          return res.redirect(req.url);
         }
 
         // Find the persona suggested by the URL prefix and adjust req.url
