@@ -258,6 +258,48 @@ describe('Personas Module', function() {
     done();
   });
 
+  it('ourReferrer passes for workflow.hostnames', done => {
+    const module = apos.modules['apostrophe-personas'];
+    let req = apos.tasks.getAnonReq({host: 'en-au-undefined:8080'});
+
+    apos.modules['apostrophe-workflow'] = {
+      hostnames: {
+        'master': process.env.APP_DOMAIN,
+        'ultralite': process.env.APP_DOMAIN,
+        'ea': process.env.APP_DOMAIN,
+        'km-kh': `km-kh-${process.env.APP_DOMAIN}`,
+        'lo-la': `lo-la-${process.env.APP_DOMAIN}`,
+        'my-mm': `my-mm-${process.env.APP_DOMAIN}`,
+        'en-sg': `en-sg-${process.env.APP_DOMAIN}`,
+        'en-au': `en-au-${process.env.APP_DOMAIN}`
+      },
+      prefixes: {
+        'master': '/master',
+        'ultralite': '/ultralite',
+        'ea': '/ea'
+      }
+    }
+
+    console.log("AW", apos.workflow);
+
+    req.method = 'GET';
+    req.session = {persona: 'employee'}; // mock persona
+    req.headers = {
+      'user-agent': userAgents.desktop,
+      'Referrer': "http://en-au-undefined:8080/foo/bar/"
+    };
+    req.data = {};
+    req.get = function (attr) {
+      return this.headers[attr];
+    }.bind(req);
+    
+    assert(req.get('Referrer') === "en-au-undefined", 'req object gets referrer');
+    assert(module.ourReferrer(req) === true, "Respect req if referrer is in workflow.hostnames");
+
+    done();
+    
+  });
+
   it('composePersonas works', function (done) {
     const module = apos.modules['apostrophe-personas'];
     const personasInit = JSON.stringify(module.personas);
