@@ -278,10 +278,10 @@ describe('Personas Module', function() {
         'ultralite': '/ultralite',
         'ea': '/ea'
       }
-    }
+    };
 
     req.method = 'GET';
-    req.session = {persona: 'employee'}; // mock persona
+    // req.session = {persona: 'employee'}; // mock persona
     req.headers = {
       'user-agent': userAgents.desktop,
       'Referrer': "http://en-au-undefined:8080/foo/bar/"
@@ -290,12 +290,11 @@ describe('Personas Module', function() {
     req.get = function (attr) {
       return this.headers[attr];
     }.bind(req);
-    
-    assert(req.get('Referrer') === "en-au-undefined", 'req object gets referrer');
+
+    assert(req.get('Referrer') === "http://en-au-undefined:8080/foo/bar/", 'req object gets referrer');
     assert(module.ourReferrer(req) === true, "Respect req if referrer is in workflow.hostnames");
 
     done();
-    
   });
 
   it('composePersonas works', function (done) {
