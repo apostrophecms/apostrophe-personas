@@ -280,8 +280,6 @@ describe('Personas Module', function() {
       }
     }
 
-    console.log("AW", apos.workflow);
-
     req.method = 'GET';
     req.session = {persona: 'employee'}; // mock persona
     req.headers = {
