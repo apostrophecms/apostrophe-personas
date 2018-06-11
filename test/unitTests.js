@@ -267,11 +267,11 @@ describe('Personas Module', function() {
         'master': process.env.APP_DOMAIN,
         'ultralite': process.env.APP_DOMAIN,
         'ea': process.env.APP_DOMAIN,
-        'km-kh': `km-kh-${process.env.APP_DOMAIN}`,
-        'lo-la': `lo-la-${process.env.APP_DOMAIN}`,
-        'my-mm': `my-mm-${process.env.APP_DOMAIN}`,
-        'en-sg': `en-sg-${process.env.APP_DOMAIN}`,
-        'en-au': `en-au-${process.env.APP_DOMAIN}`
+        'km-kh': `km-kh`,
+        'lo-la': `lo-la`,
+        'my-mm': `my-mm`,
+        'en-sg': `en-sg`,
+        'en-au': `en-au`
       },
       prefixes: {
         'master': '/master',
@@ -284,15 +284,22 @@ describe('Personas Module', function() {
     // req.session = {persona: 'employee'}; // mock persona
     req.headers = {
       'user-agent': userAgents.desktop,
-      'Referrer': "http://en-au-undefined:8080/foo/bar/"
+      'Referrer': "http://en-au:8080/foo/bar/"
     };
     req.data = {};
     req.get = function (attr) {
       return this.headers[attr];
     }.bind(req);
 
-    assert(req.get('Referrer') === "http://en-au-undefined:8080/foo/bar/", 'req object gets referrer');
+    assert(req.get('Referrer') === "http://en-au:8080/foo/bar/", 'req object gets referrer');
     assert(module.ourReferrer(req) === true, "Respect req if referrer is in workflow.hostnames");
+
+    req.headers = {
+      'user-agent': userAgents.desktop,
+      'Referrer': "http://totally-wrong:8080/foo/bar/"
+    };
+    
+    assert(module.ourReferrer(req) === false, "Referrer should still fail on hostname not in baseurl or workflow.hostnames");
 
     done();
   });
