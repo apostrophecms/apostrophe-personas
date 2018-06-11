@@ -298,7 +298,7 @@ describe('Personas Module', function() {
       'user-agent': userAgents.desktop,
       'Referrer': "http://totally-wrong:8080/foo/bar/"
     };
-    
+
     assert(module.ourReferrer(req) === false, "Referrer should still fail on hostname not in baseurl or workflow.hostnames");
 
     done();

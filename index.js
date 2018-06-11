@@ -125,7 +125,7 @@ module.exports = {
         if (req.session.persona && (!_.find(self.personas, { name: req.session.persona }))) {
           delete req.session.persona;
         }
-        
+
         // Find the persona suggested by the URL prefix and adjust req.url
         // after capturing that information.
 
