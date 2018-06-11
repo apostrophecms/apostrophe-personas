@@ -20,7 +20,6 @@ module.exports = {
   },
 
   construct: function(self, options) {
-
     self.composePersonas = function() {
       _.each(self.options.personas, function(persona) {
         if (!persona.label) {
@@ -96,12 +95,17 @@ module.exports = {
         // After that the persona prefix is sufficient so redirect to get
         // rid of the query
         if ((req.query.persona && _.find(self.personas, { name: req.query.persona })) || req.query.persona === 'none') {
-          req.session.nextPersona = req.query.persona;
+          if (req.query.persona !== 'none') {
+            req.session.nextPersona = req.query.persona;
+          }
+
           req.url = req.url.replace(/(\?)?(&)?(persona=[^&]+)/, '$1');
           req.url = req.url.replace(/\?$/, '');
           req.url = self.addPrefix(req, req.query.persona, req.url);
           return res.redirect(req.url);
         }
+        
+
         if (req.session.nextPersona) {
           req.session.persona = req.session.nextPersona;
           delete req.session.nextPersona;
