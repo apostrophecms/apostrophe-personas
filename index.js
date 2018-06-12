@@ -104,7 +104,7 @@ module.exports = {
         }
 
         var workflow = self.apos.modules['apostrophe-workflow'];
-        
+
         if (req.query.persona === 'none') {
           delete req.session.persona;
         }
@@ -123,7 +123,6 @@ module.exports = {
           req.url = self.addPrefix(req, req.query.persona, req.url);
           return res.redirect(req.url);
         }
-        
 
         if (req.session.nextPersona) {
           req.session.persona = req.session.nextPersona;
