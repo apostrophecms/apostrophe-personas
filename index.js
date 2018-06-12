@@ -114,6 +114,7 @@ module.exports = {
         // After that the persona prefix is sufficient so redirect to get
         // rid of the query
         if ((req.query.persona && _.find(self.personas, { name: req.query.persona })) || req.query.persona === 'none') {
+
           if (req.query.persona !== 'none') {
             req.session.nextPersona = req.query.persona;
           }
@@ -123,7 +124,6 @@ module.exports = {
           req.url = self.addPrefix(req, req.query.persona, req.url);
           return res.redirect(req.url);
         }
-        
 
         if (req.session.nextPersona) {
           req.session.persona = req.session.nextPersona;
@@ -196,6 +196,13 @@ module.exports = {
           if (self.ourReferrer(req)) {
             req.session.persona = urlPersona;
           } else {
+            // Don't let an old persona cause a 404 on the first request,
+            // the point of nextPersona is to see everything if they got here through
+            // a search result and we're not sure of their preferred persona yet.
+            // dgad-470
+            if (req.session.persona && (req.session.persona !== urlPersona)) {
+              delete req.session.persona;
+            }
             req.session.nextPersona = urlPersona;
           }
         }
