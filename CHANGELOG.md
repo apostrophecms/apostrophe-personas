@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.6
+
+* When the persona has just changed from the user's perspective, `req.data.personaSwitched` is set to true for that one request so that page templates can call attention to the change.
+
 ## 2.3.5
 
 * When setting `nextPersona`, we should also delete `req.sessions.persona`. This prevents a stale persona setting from causing a 404 if we follow an organic search result link, email link or manually pasted URL that leads to a page with a different persona prefix and is locked down to that prefix.
