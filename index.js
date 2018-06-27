@@ -126,7 +126,10 @@ module.exports = {
         }
 
         if (req.session.nextPersona) {
-          req.session.persona = req.session.nextPersona;
+          if (req.session.nextPersona !== req.session.persona) {
+            req.session.persona = req.session.nextPersona;
+            req.data.personaSwitched = true;
+          }
           delete req.session.nextPersona;
         }
 
@@ -194,7 +197,10 @@ module.exports = {
 
         if (urlPersona) {
           if (self.ourReferrer(req)) {
-            req.session.persona = urlPersona;
+            if (req.session.persona !== urlPersona) {
+              req.session.persona = urlPersona;
+              req.data.personaSwitched = true;
+            }
           } else {
             // Don't let an old persona cause a 404 on the first request,
             // the point of nextPersona is to see everything if they got here through
