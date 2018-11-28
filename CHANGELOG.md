@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.7
+
+* When switching persona based on a page URL, check the relevance of the referring URL via the shared implementation that understands workflow, not a dusty copy of an older version of that function.
+
 ## 2.3.6
 
 * When the persona has just changed from the user's perspective, `req.data.personaSwitched` is set to true for that one request so that page templates can call attention to the change.
