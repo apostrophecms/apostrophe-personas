@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.0
+
+* No more automatic persona switching based on previous requests (session)
+* Still put the current persona in `req.session` for backward compatibility
+* The persona `none` is now a real persona with no prefix in the urls
+* Permanent redirections are made if the request persona prefix does not match the page/piece persona
+* If a universal page is requested with no persona prefix, redirect to the first persona available
+* Author now no more see persona based content in not on the persona path unless asking it with a `showAll` parameter
+* Author will be able to select persona `none` in documents for global content
+* Added a `isPersonaUniversalContext` in `req.data` indicating if the current page has an universal persona (useful for persona switcher display in authoring)
+
 ## 2.3.7
 
 * When switching persona based on a page URL, check the relevance of the referring URL via the shared implementation that understands workflow, not a dusty copy of an older version of that function.

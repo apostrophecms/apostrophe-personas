@@ -1,7 +1,7 @@
 {
   "name": "apostrophe-personas",
-  "version": "2.3.7",
-  "description": "Specialize the content of each page of an Apostrophe site based on the user's primary affiliation (employee versus employer, truck vs. car, etc)",
+  "version": "3.0.0",
+  "description": "Specialize the content of pages of an Apostrophe site based on the path prefix",
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/ && eslint ."

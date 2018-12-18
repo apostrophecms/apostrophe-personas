@@ -137,29 +137,6 @@ describe('Personas Module', function() {
     });
   });
 
-  it('test middleware - mock after persona is chosen', function (done) {
-    const module = apos.modules['apostrophe-personas'];
-    const middleware = module.expressMiddleware.middleware;
-    let req = apos.tasks.getAnonReq();
-
-    req.method = 'GET';
-    req.session = {persona: 'employee'}; // mock persona
-    req.headers = {
-      'user-agent': userAgents.desktop
-    };
-    req.data = {};
-    req.Referrer = apos.baseUrl;
-    req.url = '/foo/bar/';
-    req.res.redirect = (url) => {
-      assert(url === `/${req.session.persona}${req.url}`, 'redirects to /PERSONA/URL');
-      done();
-    };
-
-    middleware(req, req.res, () => {
-      assert();
-    });
-  });
-
   /**
    * Unit tests
    **/
@@ -217,90 +194,6 @@ describe('Personas Module', function() {
 
     const prefixed = addPrefix(req, 'employee', req.url);
     assert(prefixed === "/employee/foo/bar/");
-    done();
-  });
-
-  it('ourReferrer works', function (done) {
-    const module = apos.modules['apostrophe-personas'];
-    let req = apos.tasks.getAnonReq();
-
-    req.method = 'GET';
-    req.session = {persona: 'employee'}; // mock persona
-    req.headers = {
-      'user-agent': userAgents.desktop,
-      'Referrer': "definitely invalid"
-    };
-    req.data = {};
-    req.get = function (attr) {
-      return this.headers[attr];
-    }.bind(req);
-
-    req.url = '/foo/bar/';
-
-    assert(typeof module.ourReferrer === 'function');
-    assert(req.get('Referrer') === "definitely invalid", 'req object gets referrer');
-    assert(module.ourReferrer(req) === false, "Invalid domain fails our referrer");
-
-    req.headers = {
-      'user-agent': userAgents.desktop,
-      'Referrer': apos.baseUrl
-    };
-
-    assert(module.ourReferrer(req) === true, "domain fails our referrer");
-
-    req.headers = {
-      'user-agent': userAgents.desktop,
-      'Referrer': `${apos.baseUrl}/foo/bar/baz/etc`
-    };
-
-    assert(module.ourReferrer(req) === true, "domain fails our referrer");
-
-    done();
-  });
-
-  it('ourReferrer passes for workflow.hostnames', done => {
-    const module = apos.modules['apostrophe-personas'];
-    let req = apos.tasks.getAnonReq({host: 'en-au-undefined:8080'});
-
-    apos.modules['apostrophe-workflow'] = {
-      hostnames: {
-        'master': process.env.APP_DOMAIN,
-        'ultralite': process.env.APP_DOMAIN,
-        'ea': process.env.APP_DOMAIN,
-        'km-kh': `km-kh`,
-        'lo-la': `lo-la`,
-        'my-mm': `my-mm`,
-        'en-sg': `en-sg`,
-        'en-au': `en-au`
-      },
-      prefixes: {
-        'master': '/master',
-        'ultralite': '/ultralite',
-        'ea': '/ea'
-      }
-    };
-
-    req.method = 'GET';
-    // req.session = {persona: 'employee'}; // mock persona
-    req.headers = {
-      'user-agent': userAgents.desktop,
-      'Referrer': "http://en-au:8080/foo/bar/"
-    };
-    req.data = {};
-    req.get = function (attr) {
-      return this.headers[attr];
-    }.bind(req);
-
-    assert(req.get('Referrer') === "http://en-au:8080/foo/bar/", 'req object gets referrer');
-    assert(module.ourReferrer(req) === true, "Respect req if referrer is in workflow.hostnames");
-
-    req.headers = {
-      'user-agent': userAgents.desktop,
-      'Referrer': "http://totally-wrong:8080/foo/bar/"
-    };
-
-    assert(module.ourReferrer(req) === false, "Referrer should still fail on hostname not in baseurl or workflow.hostnames");
-
     done();
   });
 

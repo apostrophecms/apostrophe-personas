@@ -65,34 +65,7 @@ module.exports = {
       }
     });
 
-    // Sniff out whether the referring URL appears to match the site.
-    // This is meant to be a tolerant implementation that won't fail to
-    // say yes when it should, but prevents users from being denied a view
-    // of content for other personas just because they clicked a link on
-    // a completely unrelated site or via organic search. Considers
-    // both the `baseUrl` option and the `hostnames` option of
-    // `apostrophe-workflow`.
-
-    self.ourReferrer = function(req) {
-      var workflow = self.apos.modules['apostrophe-workflow'];
-      var hostnames = self.apos.baseUrl ? [ require('url').parse(self.apos.baseUrl, false, true).hostname ] : [];
-      if (workflow) {
-        hostnames = hostnames.concat(_.values(workflow.hostnames));
-      }
-      var referrer = req.get('Referrer');
-      if (!referrer) {
-        return false;
-      }
-      var parsed = require('url').parse(referrer);
-      var result = _.find(hostnames, function(hostname) {
-        return (hostname === parsed.hostname) || (('www.' + hostname) === parsed.hostname);
-      });
-      return !!result;
-    };
-
-    // Set `req.persona` if appropriate. Redirect generic URLs
-    // to incorporate the persona when appropriate.
-
+    // Set `req.persona` if appropriate
     self.expressMiddleware = {
 
       before: 'apostrophe-global',
@@ -185,47 +158,12 @@ module.exports = {
         }
 
         // Arriving at a generic page with a persona prefix will set the persona of
-        // the user immediately if the referring URL is ours.
-        //
-        // Otherwise it sets the persona for the next request if no information
-        // to the contrary is presented by then (scenario 2, step 2).
-        //
-        // If the page is persona-specific, that also changes
-        // req.session.persona for the next access (but not this one).
-        // That is implemented in pageBeforeSend of
-        // pages as we don't have the page yet here.
-
-        if (urlPersona) {
-          if (self.ourReferrer(req)) {
-            if (req.session.persona !== urlPersona) {
-              req.session.persona = urlPersona;
-              req.data.personaSwitched = true;
-            }
-          } else {
-            // Don't let an old persona cause a 404 on the first request,
-            // the point of nextPersona is to see everything if they got here through
-            // a search result and we're not sure of their preferred persona yet.
-            // dgad-470
-            if (req.session.persona && (req.session.persona !== urlPersona)) {
-              delete req.session.persona;
-            }
-            req.session.nextPersona = urlPersona;
-          }
+        // the user immediately
+        if (req.session.persona !== urlPersona) {
+          req.session.persona = urlPersona;
+          req.data.personaSwitched = !!urlPersona;
         }
         req.data.urlPersona = urlPersona;
-
-        // Bots always get content persona based on the prefix,
-        // otherwise they would never index persona pages properly.
-        // By intention, they will also index the persona switcher links.
-        var agent = req.headers['user-agent'];
-        if (urlPersona && agent && agent.match(/bot/i)) {
-          req.session.persona = urlPersona;
-        }
-
-        if (req.session.persona && (!urlPersona)) {
-          // Add the persona prefix to the URL and redirect.
-          return res.redirect(self.addPrefix(req, req.session.persona, req.url));
-        }
 
         if (req.session.persona) {
           req.persona = req.session.persona;
@@ -305,16 +243,20 @@ module.exports = {
       return prefixes;
     };
 
-    // Should return true if the user is an editor and thus
+    self.userIsEditor = function(req) {
+      return req.user;
+    };
+
+    // Should return true if the user is an editor and explicitly ask for viewing all
+    // by passing a showAll query parameter and thus
     // should bypass the normal restrictions on whether they
     // can see widgets and pieces for other personas, for
     // editing purposes. If this definition ("anyone who is
     // logged in is a potential editor") is not fine-grained
     // enough for your purposes, override this method at
     // project level
-
-    self.userIsEditor = function(req) {
-      return req.user;
+    self.userIsEditorAndWantToSeeAll = function(req) {
+      return self.userIsEditor(req) && req.query.showAll;
     };
 
     self.addMultiplePersonasMigration = function() {
