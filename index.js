@@ -20,6 +20,9 @@ module.exports = {
   },
 
   construct: function(self, options) {
+
+    require('./lib/browser.js')(self, options);
+
     self.composePersonas = function() {
       _.each(self.options.personas, function(persona) {
         if (!persona.label) {
