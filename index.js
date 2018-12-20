@@ -246,20 +246,15 @@ module.exports = {
       return prefixes;
     };
 
-    self.userIsEditor = function(req) {
-      return req.user;
-    };
-
-    // Should return true if the user is an editor and explicitly ask for viewing all
-    // by passing a showAll query parameter and thus
+    // Should return true if the user is an editor
     // should bypass the normal restrictions on whether they
     // can see widgets and pieces for other personas, for
     // editing purposes. If this definition ("anyone who is
     // logged in is a potential editor") is not fine-grained
     // enough for your purposes, override this method at
     // project level
-    self.userIsEditorAndWantToSeeAll = function(req) {
-      return self.userIsEditor(req) && req.query.showAll;
+    self.userIsEditor = function(req) {
+      return req.user;
     };
 
     self.addMultiplePersonasMigration = function() {
