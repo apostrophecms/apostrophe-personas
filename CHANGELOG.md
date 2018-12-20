@@ -6,11 +6,10 @@
 * Still put the current persona in `req.session` for backward compatibility
 * The persona `none` is now a real persona with no prefix in the urls
 * Permanent redirections are made if the request persona prefix does not match the page/piece persona
-* If a universal page is requested with no persona prefix, redirect to the first persona available
+* If a universal page is requested with no persona prefix, and option `disableEmptyUniversal` is set to `true`, redirect to the first persona available or `options.defaultPersona` or `options.defaultPersonaByLocale` (reverse order)
 * Author now no more see persona based content in not on the persona path unless asking it with a `showAll` parameter
 * Author will be able to select persona `none` in documents for global content
 * Added a `isPersonaUniversalContext` in `req.data` indicating if the current page has an universal persona (useful for persona switcher display in authoring)
-* Added `defaultPersona` and `defaultPersonaByLocale` option to manage redirection when requesting universal content without prefix
 
 ## 2.3.7
 
