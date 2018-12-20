@@ -10,6 +10,7 @@
 * Author now no more see persona based content in not on the persona path unless asking it with a `showAll` parameter
 * Author will be able to select persona `none` in documents for global content
 * Added a `isPersonaUniversalContext` in `req.data` indicating if the current page has an universal persona (useful for persona switcher display in authoring)
+* Added `defaultPersona` and `defaultPersonaByLocale` option to manage redirection when requesting universal content without prefix
 
 ## 2.3.7
 
