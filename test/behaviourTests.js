@@ -98,6 +98,7 @@ describe('Personas Module', function() {
           ]
         },
         'apostrophe-personas': {
+          disableEmptyUniversal: true,
           personas: [
             {
               name: 'tc',
@@ -141,8 +142,8 @@ describe('Personas Module', function() {
       assert(res.toJSON().body.indexOf('No persona footer') >= 0, 'See none persona content');
     });
   });
-  /* This one has changed, now based on option disableEmptyUniversal
-  it('3. Trying to reach universal page without persona prefix should redirect to first persona path', function() {
+
+  it('3. Trying to reach universal page without persona prefix should redirect to first persona path if disableEmptyUniversal', function() {
     const opts = {
       url: basePath + 'home',
       method: 'GET',
@@ -161,7 +162,7 @@ describe('Personas Module', function() {
       assert(res.toJSON().body.indexOf('No persona footer') < 0, 'TC persona DOES NOT SEE none persona content');
     });
   });
-  */
+
   it('4. Passing persona as query should redirect to persona path', function() {
     const opts = {
       url: basePath + 'home',
@@ -194,6 +195,7 @@ describe('Personas Module', function() {
     };
 
     return rp(opts, (err, res) => {
+      console.log(res.req.path);
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.req.path === '/');
