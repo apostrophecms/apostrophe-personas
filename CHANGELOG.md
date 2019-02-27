@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.8
+
+* Do not crash if the pathname portion of a URL is somehow null.
+
 ## 2.3.7
 
 * When switching persona based on a page URL, check the relevance of the referring URL via the shared implementation that understands workflow, not a dusty copy of an older version of that function.
