@@ -33,6 +33,26 @@ describe('Personas Module', function() {
               type: 'home',
               published: true,
               title: 'Home Page',
+              persona: 'none',
+              body: {
+                type: 'area',
+                items: [
+                  {
+                    _id: "footer",
+                    type: "apostrophe-rich-text",
+                    personas: ['none'],
+                    content: "<p>No persona footer</p>"
+                  }
+                ]
+              }
+            },
+            {
+              slug: '/home',
+              parkedId: 'persona-home',
+              type: 'home',
+              published: true,
+              title: 'Persona Home Page',
+              persona: '',
               body: {
                 type: 'area',
                 items: [
@@ -49,9 +69,10 @@ describe('Personas Module', function() {
                     content: "<p>TC RELATED CONTENT</p>\n"
                   },
                   {
-                    _id: "un_home",
+                    _id: "footer",
                     type: "apostrophe-rich-text",
-                    content: "<p>Universnale home page widget</p>"
+                    personas: ["none"],
+                    content: "<p>No persona footer</p>"
                   }
                 ]
               }
@@ -77,6 +98,7 @@ describe('Personas Module', function() {
           ]
         },
         'apostrophe-personas': {
+          disableEmptyUniversal: true,
           personas: [
             {
               name: 'tc',
@@ -104,7 +126,7 @@ describe('Personas Module', function() {
     });
   });
 
-  it('2. Test initial page load -- no persona', function() {
+  it('2. Test global home page load', function() {
     const opts = {
       url: basePath,
       jar: j,
@@ -117,34 +139,13 @@ describe('Personas Module', function() {
     return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.toJSON().body.indexOf('2R RELATED CONTENT') >= 0, 'Has 2R related content');
-      assert(res.toJSON().body.indexOf('TC RELATED CONTENT') >= 0, 'Has TC related content');
+      assert(res.toJSON().body.indexOf('No persona footer') >= 0, 'See none persona content');
     });
   });
 
-  it('3. Passing persona as query should set persona on session', function() {
+  it('3. Trying to reach universal page without persona prefix should redirect to first persona path if disableEmptyUniversal', function() {
     const opts = {
-      url: basePath,
-      method: 'GET',
-      jar: j,
-      qs: {persona: 'tc'},
-      headers: {
-        Referrer: basePath
-      }
-    };
-
-    return rp(opts, (err, res) => {
-      assert(!err);
-      assert(res.statusCode === 200, 'req success');
-      assert(res.toJSON().request.uri.pathname === '/tc/');
-      assert(res.toJSON().body.indexOf('TC RELATED CONTENT' >= 0), 'TC persona sees tc related widget');
-      assert(res.toJSON().body.indexOf('2R RELATED CONTENT' < 0), 'TC persona DOES NOT SEE 2R related widget');
-    });
-  });
-
-  it('4. Subsequent visit should load persona path', function() {
-    const opts = {
-      url: basePath,
+      url: basePath + 'home',
       method: 'GET',
       jar: j,
       headers: {
@@ -155,34 +156,57 @@ describe('Personas Module', function() {
     return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.req.path === '/tc/', 'Redirects to response specific path');
+      assert(res.req.path === '/tc/home');
+      assert(res.toJSON().body.indexOf('TC RELATED CONTENT') >= 0, 'TC persona sees TC related widget');
+      assert(res.toJSON().body.indexOf('2R RELATED CONTENT') < 0, 'TC persona DOES NOT SEE 2R related widget');
+      assert(res.toJSON().body.indexOf('No persona footer') < 0, 'TC persona DOES NOT SEE none persona content');
     });
   });
 
-  it('5. New session loads generic home page', function() {
+  it('4. Passing persona as query should redirect to persona path', function() {
     const opts = {
-      url: basePath,
+      url: basePath + 'home',
+      method: 'GET',
+      jar: j,
+      qs: {persona: '2r'},
+      headers: {
+        Referrer: basePath
+      }
+    };
+
+    return rp(opts, (err, res) => {
+      assert(!err);
+      assert(res.statusCode === 200, 'req success');
+      assert(res.req.path === '/2r/home');
+      assert(res.toJSON().body.indexOf('2R RELATED CONTENT') >= 0, '2R persona sees 2R related widget');
+      assert(res.toJSON().body.indexOf('TC RELATED CONTENT') < 0, '2R persona DOES NOT SEE TC related widget');
+      assert(res.toJSON().body.indexOf('No persona footer') < 0, '2R persona DOES NOT SEE none persona content');
+    });
+  });
+
+  it('5. Trying to reach global home page with persona prefix should redirect to root', function() {
+    const opts = {
+      url: basePath + 'tc',
       method: 'GET',
       jar: j1,
-
       headers: {
         Referrer: basePath
       }
     };
 
     return rp(opts, (err, res) => {
+      console.log(res.req.path);
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
-      assert(res.req.path === '/', 'loads base path');
+      assert(res.req.path === '/');
     });
   });
 
-  it('6. Visit persona page sets persona session', function() {
+  it('6. Trying to reach persona specific page without persona prefix should redirect to persona path', function() {
     const opts = {
       url: basePath + '2r-related',
       method: 'GET',
-      jar: j1,
+      jar: j,
       headers: {
         Referrer: basePath
       }
@@ -191,14 +215,15 @@ describe('Personas Module', function() {
     return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
+      assert(res.req.path === '/2r/2r-related');
     });
   });
 
-  it('7. Subsequent request is forwarded to persona url', function() {
+  it('6. Trying to reach persona specific page with bad persona prefix should redirect to persona path', function() {
     const opts = {
-      url: basePath,
+      url: basePath + 'tc/2r-related',
       method: 'GET',
-      jar: j1,
+      jar: j,
       headers: {
         Referrer: basePath
       }
@@ -207,42 +232,7 @@ describe('Personas Module', function() {
     return rp(opts, (err, res) => {
       assert(!err);
       assert(res.statusCode === 200, 'req success');
-      assert(res.req.path === '/2r/', 'Redirects to response specific path');
-    });
-  });
-
-  it('8. Visit persona page loads default page, sets cookie', function() {
-    const opts = {
-      url: basePath,
-      method: 'GET',
-      qs: {persona: 'tc'},
-      jar: j1,
-      headers: {
-        Referrer: basePath
-      }
-    };
-
-    return rp(opts, (err, res) => {
-      assert(!err);
-      assert(res.statusCode === 200, 'req success');
-      assert(res.toJSON().body.indexOf('ello world') >= 0, 'Has default apostrophe homepage');
-    });
-  });
-
-  it('9. Subsequent visit to basePath redirects to persona base', function() {
-    const opts = {
-      url: basePath,
-      method: 'GET',
-      jar: j1,
-      headers: {
-        Referrer: basePath
-      }
-    };
-
-    return rp(opts, (err, res) => {
-      assert(!err);
-      assert(res.statusCode === 200, 'req success');
-      assert(res.req.path === '/tc/', 'Redirects to persona specific path');
+      assert(res.req.path === '/2r/2r-related');
     });
   });
 });

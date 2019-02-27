@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.0.0
+
+> The version number of this module is **not** related to the version
+of ApostropheCMS it is compatible with. It is still intended for
+use with Apostrophe 2.x.
+
+* SEO fix (and a bc break, thus a new major version): personas are indicated via a URL prefix consistently, for correct SEO. That is, if your current persona is `auto`, there will always be a corresponding URL prefix.
+* Still stores the current persona in `req.session.persona` for backward compatibility and to implement the `req.data.personaSwitched` mechanism.
+* The persona `none` is now a real persona, with no prefix in the urls.
+* Permanent redirections (301) are made if the page or piece has a specified persona and the persona prefix of the URL does not match the page/piece persona.
+* If a universal page is requested with no persona prefix, and the option `disableEmptyUniversal` is set to `true`, redirects to `options.defaultPersonaByLocale` (an object with values for each locale), or to `options.defaultPersona`, or finally to the first configured persona.
+* Author will be able to select persona `none` in documents for global content.
+* Added a `isPersonaUniversalContext` in `req.data` indicating if the current page has an universal persona (useful for persona switcher display in authoring).
+
+Thanks to Michelin for their engagement with this development.
+
 ## 2.3.8
 
 * Do not crash if the pathname portion of a URL is somehow null.

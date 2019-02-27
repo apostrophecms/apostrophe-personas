@@ -8,11 +8,11 @@ This module helps you specialize the content of each page of an [Apostrophe site
 
 Consider the employee versus employer example. Every widget on the site can be designated as universal, employee-oriented, or employer-oriented. By default, users see all of these, as the site doesn't yet know which is relevant.
 
-But as soon as the user takes action to indicate their employee status, they see only universal widgets and employee widgets, unless they decide to switch back.
+But as soon as the user takes action to indicate their employee status, a prefix is added to the URL and they see only universal widgets and employee widgets, unless they decide to switch back.
 
 Also, pages can be designated as oriented toward one persona or the other. This can be used to avoid showing them as navigation options to uninterested parties.
 
-Page URLs can be prefixed based on the active persona, which improves bookmarking and social sharing outcomes as well as allowing search engines to index them with different content subsets.
+Page URLs are always prefixed based on the active persona, which improves bookmarking and social sharing outcomes as well as allowing search engines to index them with different content subsets.
 
 ## Example
 
@@ -113,3 +113,16 @@ Make sure the widget also has a `joinByOne` or `joinByArray` field whose `withTy
 When you do so, `apostrophe-personas` will automatically detect this situation and correct the generated links to match the specified persona.
 
 > Note that if you are completely overriding the `load` method of your widget without calling the original version of the method, this mechanism will not work automatically. However it is also possible to call the `addPrefix(req, personaName, url)` method of the `apostrophe-personas` module to retrieve a version of any URL that has been corrected for the specified persona.
+
+## Forcing persona selection
+
+If the `disableEmptyUniveral` option is set to `true`, this option forces a persona to be selected at all times. When a universal document is requested with no persona prefix, the user is redirected to the persona found in `options.defaultPersonaByLocale` (an object with values for each locale), or to `options.defaultPersona`, or finally to the first configured persona.
+
+## Detecting the persona in templates
+
+In your templates, `data.persona` indicates the current persona.
+
+`data.isPersonaUniversalContext` will be true if the current document haws a universal persona (useful for persona switcher display in authoring).
+
+`data.personaSwitched` indicates that the persona just changed.
+
