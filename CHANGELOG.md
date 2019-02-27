@@ -14,6 +14,8 @@ use with Apostrophe 2.x.
 * Author will be able to select persona `none` in documents for global content.
 * Added a `isPersonaUniversalContext` in `req.data` indicating if the current page has an universal persona (useful for persona switcher display in authoring).
 
+Thanks to Michelin for their engagement with this development.
+
 ## 2.3.8
 
 * Do not crash if the pathname portion of a URL is somehow null.
