@@ -193,7 +193,7 @@ module.exports = {
       var personas = self.apos.modules['apostrophe-personas'];
       var liveLocale = workflow && workflow.liveify(req.locale);
       var workflowPrefix = (liveLocale && workflow.prefixes && workflow.prefixes[liveLocale]) || '';
-      if (require('url').parse(url).pathname.substr(0, workflowPrefix.length) !== workflowPrefix) {
+      if ((require('url').parse(url).pathname || '').substr(0, workflowPrefix.length) !== workflowPrefix) {
         // Workflow prefix is not actually present, probably a route like /login
         workflowPrefix = '';
       }
@@ -214,6 +214,8 @@ module.exports = {
         return result;
       }
       function prepend(path) {
+        // Watch out for null paths in edge cases when parsing the URL
+        path = path || '';
         path = path.substr(workflowPrefix.length);
 
         var existingPersonaPrefix = _.find(self.getAllPrefixes(req), function(prefix) {
@@ -252,7 +254,9 @@ module.exports = {
     // editing purposes. If this definition ("anyone who is
     // logged in is a potential editor") is not fine-grained
     // enough for your purposes, override this method at
-    // project level
+    // project level. This mechanism is needed, otherwise
+    // editors will accidentally erase all content for other
+    // personas when an area saves
     self.userIsEditor = function(req) {
       return req.user;
     };
