@@ -122,7 +122,7 @@ If the `disableEmptyUniveral` option is set to `true`, this option forces a pers
 
 In your templates, `data.persona` indicates the current persona.
 
-`data.isPersonaUniversalContext` will be true if the current document haws a universal persona (useful for persona switcher display in authoring).
+`data.isPersonaUniversalContext` will be true if the current document has a universal persona (useful for persona switcher display in authoring).
 
 `data.personaSwitched` indicates that the persona just changed.
 
