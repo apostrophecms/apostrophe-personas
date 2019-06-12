@@ -188,7 +188,6 @@ module.exports = {
     // one appropriate to the given persona name.
 
     self.addPrefix = function(req, persona, url) {
-
       var workflow = self.apos.modules['apostrophe-workflow'];
       var personas = self.apos.modules['apostrophe-personas'];
       var liveLocale = workflow && workflow.liveify(req.locale);
@@ -204,6 +203,7 @@ module.exports = {
       } else {
         prefix = workflow ? personaInfo.prefixes[liveLocale] : personaInfo.prefix;
       }
+
       if (url.match(/^(https?:)?\/\//)) {
         // Turn on the "slashes denote host" option
         var parsed = require('url').parse(url, false, true);
