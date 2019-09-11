@@ -87,8 +87,8 @@ describe('Personas Module', function() {
       });
   });
 
-  // test fail on non-get req
-  it('middleware should not touch non-GET reqs', function (done) {
+  // test fail on POST req
+  it('middleware should not touch POST reqs', function (done) {
     const module = apos.modules['apostrophe-personas'];
     const middleware = module.expressMiddleware.middleware;
     let req = apos.tasks.getAnonReq();
@@ -116,6 +116,37 @@ describe('Personas Module', function() {
     assert(typeof middleware === "function", 'has middleware object');
 
     req.method = 'GET';
+    req.session = {};
+    req.headers = {
+      'user-agent': userAgents.desktop
+    };
+    req.query = {persona: "employee"};
+    req.data = {}; // @@NOTE - personas middleware expects this, not sure where it comes from -pw
+    req.Referrer = apos.baseUrl;
+    req.url = 'foo';
+
+    // stub redirect
+    req.res.redirect = (url) => {
+      assert(url, 'redirect happens');
+      done();
+    };
+
+    middleware(req, req.res, () => {
+      assert(false, 'this should fail, redirect should have already happened');
+      done();
+    });
+  });
+
+  // test module middleware for HEAD req
+  it('test persona switcher - redirect via query', function (done) {
+    const module = apos.modules['apostrophe-personas'];
+    const middleware = module.expressMiddleware.middleware;
+    let req = apos.tasks.getAnonReq();
+
+    assert(module, 'has personas module');
+    assert(typeof middleware === "function", 'has middleware object');
+
+    req.method = 'HEAD';
     req.session = {};
     req.headers = {
       'user-agent': userAgents.desktop

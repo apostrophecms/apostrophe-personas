@@ -75,7 +75,7 @@ module.exports = {
 
       middleware: function(req, res, next) {
 
-        if (req.method !== 'GET') {
+        if ((req.method !== 'GET') && (req.method !== 'HEAD')) {
           return next();
         }
 
