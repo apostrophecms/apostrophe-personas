@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.2
+
+* Run the personas middleware on HEAD requests as well. Thanks to Michelin for making this work possible via [Apostrophe Enterprise Support](https://apostrophecms.org/support/enterprise-support).
+
 ## 3.0.1
 
 * Universal pages now display widgets of *all* personas. Prior to this, universal pages only showed `universal` and `none`. This is because in `3.0.0`, the persona `none` was recognized as a real persona. Both `none` and `universal` both have no url prefix. However, `universal` personas persist among all personas, whereas `none` is only available when there is no prefix set, or `No Persona` is selected. 
