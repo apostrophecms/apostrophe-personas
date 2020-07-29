@@ -190,8 +190,8 @@ module.exports = {
     self.addPrefix = function(req, persona, url) {
       var workflow = self.apos.modules['apostrophe-workflow'];
       var personas = self.apos.modules['apostrophe-personas'];
-      var liveLocale = self.getLiveLocale();
-      var workflowPrefix = self.getWorkflowPrefix();
+      var liveLocale = workflow && workflow.liveify(req.locale);
+      var workflowPrefix = (liveLocale && workflow.prefixes && workflow.prefixes[liveLocale]) || '';
       if ((require('url').parse(url).pathname || '').substr(0, workflowPrefix.length) !== workflowPrefix) {
         // Workflow prefix is not actually present, probably a route like /login
         workflowPrefix = '';
@@ -287,7 +287,7 @@ module.exports = {
     self.apos.define('apostrophe-cursor', require('./lib/cursor.js'));
 
     self.on('apostrophe-pages:notFound', 'softRedirectWithPersona', async (req) => {
-      const soft = self.apos.modules['soft-redirects'];
+      const soft = self.apos.modules['apostrophe-soft-redirects'];
       const doc = await self.apos.docs.find(req, { historicUrls: { $in: personify(req.url) } }).sort({ updatedAt: -1 }).toObject();
       if (!doc) {
         return;
