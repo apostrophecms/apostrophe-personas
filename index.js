@@ -188,15 +188,11 @@ module.exports = {
     // one appropriate to the given persona name.
 
     self.addPrefix = function(req, persona, url) {
-      var workflow = self.apos.modules['apostrophe-workflow'];
-      var personas = self.apos.modules['apostrophe-personas'];
-      var liveLocale = workflow && workflow.liveify(req.locale);
-      var workflowPrefix = (liveLocale && workflow.prefixes && workflow.prefixes[liveLocale]) || '';
-      if ((require('url').parse(url).pathname || '').substr(0, workflowPrefix.length) !== workflowPrefix) {
-        // Workflow prefix is not actually present, probably a route like /login
-        workflowPrefix = '';
-      }
-      var personaInfo = (persona === 'none') ? 'none' : _.find(personas.personas, { name: persona });
+      const {
+        liveLocale,
+        workflowPrefix
+      } = self.getLiveLocaleAndWorkflowPrefix(req, url);
+      var personaInfo = (persona === 'none') ? 'none' : _.find(self.personas, { name: persona });
       var prefix;
       if (personaInfo === 'none') {
         prefix = '';
@@ -285,6 +281,44 @@ module.exports = {
     };
 
     self.apos.define('apostrophe-cursor', require('./lib/cursor.js'));
+
+    self.on('apostrophe-pages:notFound', 'softRedirectWithPersona', function(req) {
+      const soft = self.apos.modules['soft-redirects'];
+      const doc = await self.apos.docs.find(req, { historicUrls: { $in: personify(req.url) } }).sort({ updatedAt: -1 }).toObject();
+      if (!doc) {
+        return;
+      }
+      if (!doc._url) {
+        return;
+      }
+      if (soft.local(doc._url) !== req.url) {
+        req.redirect = soft.local(doc._url);
+        req.statusCode = soft.options.statusCode || 302;
+      }
+      function personify(url) {
+        // URL will not contain personas yet. Personas come after
+        // workflow prefixes, if any
+        const {
+          liveLocale,
+          workflowPrefix
+        } = self.getLiveLocaleAndWorkflowPrefix(req, url);
+        
+      }
+    });
+
+    self.getLiveLocaleAndWorkflowPrefix = function(req, url) {
+      const workflow = self.apos.modules['apostrophe-workflow'];
+      const liveLocale = workflow && workflow.liveify(req.locale);
+      let workflowPrefix = (liveLocale && workflow.prefixes && workflow.prefixes[liveLocale]) || '';
+      if ((require('url').parse(url).pathname || '').substr(0, workflowPrefix.length) !== workflowPrefix) {
+        // Workflow prefix is not actually present, probably a route like /login
+        workflowPrefix = '';
+      }
+      return {
+        liveLocale,
+        workflowPrefix
+      };
+    };
 
   }
 };
