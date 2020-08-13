@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.3
+
+* Fully compatible with Apostrophe's "soft redirects" feature. When the slug of a page or piece that has a persona has been changed, Apostrophe can now redirect to the new slug, as long as nothing else has laid claim to the old one. Normally a standard feature, formerly this did not work for pages or pieces with an explicit persona setting.
+
 ## 3.0.2
 
 * Run the personas middleware on HEAD requests as well. Thanks to Michelin for making this work possible via [Apostrophe Enterprise Support](https://apostrophecms.org/support/enterprise-support).

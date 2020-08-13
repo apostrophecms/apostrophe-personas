@@ -1,6 +1,6 @@
 {
   "name": "apostrophe-personas",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Specialize the content of pages of an Apostrophe site based on the path prefix, for instance employee versus employer, truck vs. car, etc.",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/apostrophecms/apostrophe-personas#readme",
   "devDependencies": {
+    "apostrophe": "^2.49.0",
     "eslint": "^4.15.0",
     "eslint-config-punkave": "^1.0.10",
     "eslint-config-standard": "^11.0.0-beta.0",
@@ -28,9 +29,8 @@
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
-    "mocha": "^5.0.0",
-    "request": "^2.85.0",
-    "apostrophe": "^2.49.0"
+    "mocha": "^8.0.1",
+    "request": "^2.85.0"
   },
   "dependencies": {
     "request-promise": "^4.2.2",
