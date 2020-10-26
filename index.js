@@ -71,7 +71,7 @@ module.exports = {
     // Set `req.persona` if appropriate
     self.expressMiddleware = {
 
-      before: 'apostrophe-global',
+      before: 'apostrophe-login',
 
       middleware: function(req, res, next) {
 
