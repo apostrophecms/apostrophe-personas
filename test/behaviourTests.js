@@ -195,7 +195,6 @@ describe('Personas Module', function() {
     };
 
     return rp(opts, (err, res) => {
-      console.log(res.req.path);
       assert(!err);
       assert(res.statusCode === 200, 'req success');
       assert(res.req.path === '/');

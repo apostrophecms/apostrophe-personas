@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.4
+
+* Fully compatible with the [totp / google authenticator login](https://docs.apostrophecms.org/reference/modules/apostrophe-login/) feature of Apostrophe. Formerly a redirect loop occurred if that feature was combined with the `disableEmptyUniveral` option of this module.
+
 ## 3.0.3
 
 * Fully compatible with Apostrophe's "soft redirects" feature. When the slug of a page or piece that has a persona has been changed, Apostrophe can now redirect to the new slug, as long as nothing else has laid claim to the old one. Normally a standard feature, formerly this did not work for pages or pieces with an explicit persona setting.
