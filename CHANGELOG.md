@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.5
+## 3.0.5 (2020-11-13)
 
 * Restored the original middleware timing. The change in 3.0.4 unfortunately caused a regression in the presence of prefixed locales.
 * Introduced the `neverForcePersona` option, which allows specifying a list of URLs that should never have a persona forced for them even if `disableEmptyUniversal` is `true`, and `minimumNeverForcePersona`, which always includes the routes necessary for TOTP authentication. This solves the same problem as 3.0.4 without causing other issues.
