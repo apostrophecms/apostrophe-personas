@@ -1,6 +1,6 @@
 {
   "name": "apostrophe-personas",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Specialize the content of pages of an Apostrophe site based on the path prefix, for instance employee versus employer, truck vs. car, etc.",
   "main": "index.js",
   "scripts": {

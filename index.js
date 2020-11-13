@@ -14,12 +14,16 @@ module.exports = {
     ]
   },
 
+  minimumNeverForcePersona: [ '/login-totp', '/setup-totp', '/confirm-totp' ],
+
   afterConstruct: function(self) {
     self.composePersonas();
     self.addMultiplePersonasMigration();
   },
 
   construct: function(self, options) {
+
+    self.options.neverForcePersona = (options.neverForcePersona || []).concat(options.minimumNeverForcePersona || []);
 
     require('./lib/browser.js')(self, options);
 
@@ -71,7 +75,7 @@ module.exports = {
     // Set `req.persona` if appropriate
     self.expressMiddleware = {
 
-      before: 'apostrophe-login',
+      before: 'apostrophe-global',
 
       middleware: function(req, res, next) {
 
