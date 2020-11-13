@@ -116,7 +116,7 @@ When you do so, `apostrophe-personas` will automatically detect this situation a
 
 ## Forcing persona selection
 
-If the `disableEmptyUniveral` option is set to `true`, this option forces a persona to be selected at all times. When a universal document is requested with no persona prefix, the user is redirected to the persona found in `options.defaultPersonaByLocale` (an object with values for each locale), or to `options.defaultPersona`, or finally to the first configured persona.
+If the `disableEmptyUniversal` option is set to `true`, this option forces a persona to be selected at all times. When a universal document is requested with no persona prefix, the user is redirected to the persona found in `options.defaultPersonaByLocale` (an object with values for each locale), or to `options.defaultPersona`, or finally to the first configured persona.
 
 Because this option will cause a redirect to add the prefix for the persona, code for custom routes may occasionally respond in surprising ways. You can disable the effect of this option for such URLs via the `neverForcePersona` option, which can be set to an array of URLs. It is concatenated with `minimumNeverForcePersona`, which defaults to:
 
